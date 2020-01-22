@@ -8,6 +8,22 @@ type Vector3d struct {
 	X, Y, Z float64
 }
 
+func NewVector3d(x, y, z float64) *Vector3d {
+	return &Vector3d{
+		X: x,
+		Y: y,
+		Z: z,
+	}
+}
+
+func NewZeroVector3d() *Vector3d {
+	return &Vector3d{
+		X: 0.0,
+		Y: 0.0,
+		Z: 0.0,
+	}
+}
+
 func (s *Vector3d) Normalized() {
 	mag := s.Magnitude()
 	if mag != 0 {
@@ -78,21 +94,5 @@ func (s *Vector3d) Divided(by float64) *Vector3d {
 		X: s.X / by,
 		Y: s.Y / by,
 		Z: s.Z / by,
-	}
-}
-
-func NewVector3d(x, y, z float64) *Vector3d {
-	return &Vector3d{
-		X: x,
-		Y: y,
-		Z: z,
-	}
-}
-
-func NewZeroVector3d() *Vector3d {
-	return &Vector3d{
-		X: 0.0,
-		Y: 0.0,
-		Z: 0.0,
 	}
 }

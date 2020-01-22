@@ -1,23 +1,28 @@
-package main
+package stack
 
 import (
 	"fmt"
 )
+
+// NewStack creates a new instance of a stack
+func NewStack() *stack {
+	return &stack{nil}
+}
 
 type stack struct {
 	top *node
 }
 
 type node struct {
-	next *node
+	next  *node
 	value int
 }
 
-func (s *stack) isempty() bool {
+func (s *stack) IsEmpty() bool {
 	return s.top == nil
 }
 
-func (s *stack) peek() int {
+func (s *stack) Peek() int {
 	if s.top != nil {
 		return s.top.value
 	}
@@ -25,35 +30,34 @@ func (s *stack) peek() int {
 	return 0
 }
 
-func (s *stack) push(val int) {
-	n := node{nil, val}	
+func (s *stack) Push(val int) {
+	n := node{nil, val}
 	n.next = s.top
 	s.top = &n
 }
 
-func (s *stack) pop() int {
+func (s *stack) Pop() int {
 	if s.top != nil {
 		val := s.top.value
 		s.top = s.top.next
 		return val
 	}
-	
+
 	return 0
 }
 
-func (s *stack) print() {
+func (s *stack) Print() {
 	current := s.top
 	if current != nil {
-		fmt.Print(current.value)
-		fmt.Print(" ")
+		fmt.Printf("%d ", current.value)
 		for current.next != nil {
 			current = current.next
-			fmt.Print(current.value)
-			fmt.Print(" ")
+			fmt.Printf("%d ", current.value)
 		}
 	}
 }
 
+/*
 func main() {
 	s := stack{nil}
 	s.push(4)
@@ -69,3 +73,4 @@ func main() {
 	fmt.Printf("%v\n", s.pop())
 	s.print()
 }
+*/

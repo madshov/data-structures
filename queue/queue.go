@@ -1,8 +1,13 @@
-package main
+package queue
 
 import (
 	"fmt"
 )
+
+// NewQueue creates a new instance of a queue
+func NewQueue() *queue {
+	return &queue{nil, nil}
+}
 
 type queue struct {
 	head *node
@@ -10,23 +15,23 @@ type queue struct {
 }
 
 type node struct {
-	next *node
+	next  *node
 	value int
 }
 
-func (q *queue) isempty() bool {
+func (q *queue) IsEmpty() bool {
 	return q.head == nil
 }
 
-func (q *queue) peek() int {
+func (q *queue) Peek() int {
 	if q.head != nil {
 		return q.head.value
 	}
-	
+
 	return 0
 }
 
-func (q *queue) add(val int) {
+func (q *queue) Add(val int) {
 	node := node{nil, val}
 	if q.tail != nil {
 		q.tail.next = &node
@@ -38,7 +43,7 @@ func (q *queue) add(val int) {
 	}
 }
 
-func (q *queue) remove() int {
+func (q *queue) Remove() int {
 	if q.head != nil {
 		val := q.head.value
 		q.head = q.head.next
@@ -51,19 +56,18 @@ func (q *queue) remove() int {
 	return 0
 }
 
-func (q *queue) print() {
+func (q *queue) Print() {
 	current := q.head
 	if current != nil {
-		fmt.Print(current.value)
-		fmt.Printf(" ")
+		fmt.Printf("%d ", current.value)
 		for current.next != nil {
 			current = current.next
-			fmt.Print(current.value)
-			fmt.Printf(" ")
+			fmt.Printf("%d ", current.value)
 		}
 	}
 }
 
+/*
 func main() {
 	q := queue{nil, nil}
 	q.add(4)
@@ -76,3 +80,4 @@ func main() {
 	fmt.Printf("%v\n", q.tail)
 	q.print()
 }
+*/

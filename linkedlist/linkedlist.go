@@ -1,11 +1,18 @@
-package main
+package linkedlist
 
 import (
 	"fmt"
 )
 
+// NewLinkedList creates a new instance of a list
+func NewLinkedList(val int) *list {
+	return &list{
+		&node{nil, val},
+	}
+}
+
 type node struct {
-	next *node
+	next  *node
 	value int
 }
 
@@ -13,7 +20,7 @@ type list struct {
 	head *node
 }
 
-func (l *list) append(val int) {
+func (l *list) Append(val int) {
 	current := l.head
 	for current.next != nil {
 		current = current.next
@@ -23,38 +30,36 @@ func (l *list) append(val int) {
 	current.next = &node
 }
 
-func (l *list) prepend(val int) {
+func (l *list) Prepend(val int) {
 	new := node{l.head, val}
 	l.head = &new
 }
 
-func (l *list) delete(val int) {
+func (l *list) Delete(val int) {
 	current := l.head
 	if current.value == val {
 		l.head = current.next
 	} else {
 		for current.next != nil {
 			if current.next.value == val {
-				current.next = current.next.next	
-				break	
+				current.next = current.next.next
+				break
 			}
 			current = current.next
 		}
 	}
 }
 
-func (l *list) print() {
+func (l *list) Print() {
 	current := l.head
-	fmt.Print(current.value)
-	fmt.Print(" ");
-
+	fmt.Printf("%d ", current.value)
 	for current.next != nil {
 		current = current.next
-		fmt.Print(current.value);
-		fmt.Print(" ")
+		fmt.Printf("%d ", current.value)
 	}
 }
 
+/*
 func main() {
 	head := node{nil,1}
 	l := list{&head}
@@ -67,12 +72,13 @@ func main() {
 	l.prepend(4)
 	l.print()
 	l.delete(5)
-	fmt.Println()	
+	fmt.Println()
 	l.print()
 	l.delete(4)
-	fmt.Println()	
+	fmt.Println()
 	l.print()
 	l.delete(10)
-	fmt.Println()	
+	fmt.Println()
 	l.print()
 }
+*/

@@ -1,4 +1,4 @@
-package main
+package bintree
 
 import (
 	"fmt"
@@ -10,75 +10,78 @@ type node struct {
 	value int
 }
 
-func (n *node) insert(val int) {
+// NewBinTree creates a new instance of a root node
+func NewBinTree(rootVal int) *node {
+	return &node{nil, nil, rootVal}
+}
+
+func (n *node) Insert(val int) {
 	if val <= n.value {
 		if n.left == nil {
-			node := node{nil,nil,val}
+			node := node{nil, nil, val}
 			n.left = &node
 		} else {
-			n.left.insert(val)
+			n.left.Insert(val)
 		}
 	} else {
 		if n.right == nil {
-			node := node{nil,nil,val}
+			node := node{nil, nil, val}
 			n.right = &node
 		} else {
-			n.right.insert(val)
+			n.right.Insert(val)
 		}
 	}
 }
 
-func (n *node) contains(val int) bool {
+func (n *node) Contains(val int) bool {
 	if n.value == val {
 		return true
 	}
-		
+
 	if n.value > val {
 		if n.left != nil {
-			return n.left.contains(val)
+			return n.left.Contains(val)
 		}
 	} else {
 		if n.right != nil {
-			return n.right.contains(val)
+			return n.right.Contains(val)
 		}
 	}
 
 	return false
 }
 
-func (n *node) inorder() {
+func (n *node) InOrder() {
 	if n.left != nil {
-		n.left.inorder()
+		n.left.InOrder()
 	}
-	fmt.Print(n.value)
-	fmt.Print(" ")
+	fmt.Printf("%d ", n.value)
 	if n.right != nil {
-		n.right.inorder()
+		n.right.InOrder()
 	}
 }
 
-func (n *node) preorder() {
-	fmt.Print(n.value)
-	fmt.Print(" ")
+func (n *node) PreOrder() {
+	fmt.Printf("%d ", n.value)
 	if n.left != nil {
-		n.left.preorder()
+		n.left.PreOrder()
 	}
 	if n.right != nil {
-		n.right.preorder()
+		n.right.PreOrder()
 	}
 }
 
-func (n *node) postorder() {
+func (n *node) PostOrder() {
 	if n.left != nil {
-		n.left.postorder()
+		n.left.PostOrder()
 	}
 	if n.right != nil {
-		n.right.postorder()
+		n.right.PostOrder()
 	}
-	fmt.Print(n.value)
-	fmt.Print(" ")
+	fmt.Printf("%d ", n.value)
 }
 
+/*
 func main() {
 	root := node{nil,nil,10}
 	root.insert(3)
@@ -102,3 +105,4 @@ func main() {
 	root.postorder()
 	//fmt.Printf("%v", n1)
 }
+*/
