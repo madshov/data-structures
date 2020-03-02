@@ -5,11 +5,11 @@ import (
 )
 
 // NewStack creates a new instance of a stack
-func NewStack() *stack {
-	return &stack{nil}
+func NewStack() *Stack {
+	return &Stack{nil}
 }
 
-type stack struct {
+type Stack struct {
 	top *node
 }
 
@@ -18,11 +18,11 @@ type node struct {
 	value int
 }
 
-func (s *stack) IsEmpty() bool {
+func (s *Stack) IsEmpty() bool {
 	return s.top == nil
 }
 
-func (s *stack) Peek() int {
+func (s *Stack) Peek() int {
 	if s.top != nil {
 		return s.top.value
 	}
@@ -30,13 +30,13 @@ func (s *stack) Peek() int {
 	return 0
 }
 
-func (s *stack) Push(val int) {
+func (s *Stack) Push(val int) {
 	n := node{nil, val}
 	n.next = s.top
 	s.top = &n
 }
 
-func (s *stack) Pop() int {
+func (s *Stack) Pop() int {
 	if s.top != nil {
 		val := s.top.value
 		s.top = s.top.next
@@ -46,7 +46,7 @@ func (s *stack) Pop() int {
 	return 0
 }
 
-func (s *stack) Print() {
+func (s *Stack) Print() {
 	current := s.top
 	if current != nil {
 		fmt.Printf("%d ", current.value)

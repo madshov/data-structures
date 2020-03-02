@@ -31,7 +31,7 @@ func (q *queue) Peek() int {
 	return 0
 }
 
-func (q *queue) Add(val int) {
+func (q *queue) EnQueue(val int) {
 	node := node{nil, val}
 	if q.tail != nil {
 		q.tail.next = &node
@@ -43,7 +43,7 @@ func (q *queue) Add(val int) {
 	}
 }
 
-func (q *queue) Remove() int {
+func (q *queue) Dequeue() int {
 	if q.head != nil {
 		val := q.head.value
 		q.head = q.head.next
