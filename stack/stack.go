@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// NewStack creates a new instance of a stack
+// NewStack creates a new instance of a Stack, and returns a pointer to it.
 func NewStack() *Stack {
 	return &Stack{nil}
 }

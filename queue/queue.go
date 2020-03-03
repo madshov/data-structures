@@ -4,12 +4,14 @@ import (
 	"fmt"
 )
 
-// NewQueue creates a new instance of a queue
-func NewQueue() *queue {
-	return &queue{nil, nil}
+// NewQueue creates a new instance of a Queue, and returns a pointer to it.
+func NewQueue() *Queue {
+	return &Queue{nil, nil}
 }
 
-type queue struct {
+// Queue holds a node pointers to first and last elements of the queue
+// respectively.
+type Queue struct {
 	head *node
 	tail *node
 }
@@ -19,11 +21,14 @@ type node struct {
 	value int
 }
 
-func (q *queue) IsEmpty() bool {
+// IsEmpty returns whether queue is empty or not.
+func (q *Queue) IsEmpty() bool {
 	return q.head == nil
 }
 
-func (q *queue) Peek() int {
+// Peek returns the value of the first element in the queue. The element will
+// not be dequeued.
+func (q *Queue) Peek() int {
 	if q.head != nil {
 		return q.head.value
 	}
@@ -31,7 +36,8 @@ func (q *queue) Peek() int {
 	return 0
 }
 
-func (q *queue) EnQueue(val int) {
+// Enqueue adds an element to the queue.
+func (q *Queue) Enqueue(val int) {
 	node := node{nil, val}
 	if q.tail != nil {
 		q.tail.next = &node
@@ -43,7 +49,8 @@ func (q *queue) EnQueue(val int) {
 	}
 }
 
-func (q *queue) Dequeue() int {
+// Dequeue removes an element from the queue and returns its value.
+func (q *Queue) Dequeue() int {
 	if q.head != nil {
 		val := q.head.value
 		q.head = q.head.next
@@ -56,7 +63,8 @@ func (q *queue) Dequeue() int {
 	return 0
 }
 
-func (q *queue) Print() {
+// Print prints a visual representation of the queue to stdout.
+func (q *Queue) Print() {
 	current := q.head
 	if current != nil {
 		fmt.Printf("%d ", current.value)
@@ -66,18 +74,3 @@ func (q *queue) Print() {
 		}
 	}
 }
-
-/*
-func main() {
-	q := queue{nil, nil}
-	q.add(4)
-	q.add(5)
-	q.add(6)
-	q.add(7)
-	fmt.Printf("%v", q.remove())
-	fmt.Printf("%v", q.remove())
-	fmt.Printf("%v", q.head)
-	fmt.Printf("%v\n", q.tail)
-	q.print()
-}
-*/
