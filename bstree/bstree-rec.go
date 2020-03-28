@@ -11,7 +11,7 @@
 // key.
 // Example of an instance of a binary search tree with 11 nodes:
 //
-//                      15
+//						15
 //					  /    \
 //					 6      18
 //					/ \    /  \
@@ -75,10 +75,12 @@ func (t *TreeRec) ins(n *Node, val int) *Node {
 		if n.left != nil {
 			return t.ins(n.left, val)
 		}
-	} else {
-		if n.right != nil {
-			return t.ins(n.right, val)
-		}
+
+		return n
+	}
+
+	if n.right != nil {
+		return t.ins(n.right, val)
 	}
 
 	return n
@@ -103,24 +105,25 @@ func (t *TreeRec) Delete(val int) {
 func (t *TreeRec) del(n *Node, val int) *Node {
 	if val < n.value {
 		n.left = t.del(n.left, val)
-	} else {
-		if val > n.value {
-			n.right = t.del(n.right, val)
-		} else {
-			if n.left == nil {
-				return n.right
-			}
-
-			if n.right == nil {
-				return n.left
-			}
-
-			m := t.Successor(n)
-			n.value = m.value
-			n.right = t.del(n.right, n.value)
-		}
+		return n
 	}
 
+	if val > n.value {
+		n.right = t.del(n.right, val)
+		return n
+	}
+
+	if n.left == nil {
+		return n.right
+	}
+
+	if n.right == nil {
+		return n.left
+	}
+
+	m := t.Successor(n)
+	n.value = m.value
+	n.right = t.del(n.right, n.value)
 	return n
 }
 
@@ -132,21 +135,19 @@ func (t *TreeRec) del(n *Node, val int) *Node {
 // The binary-search-tree property ensures that this is the correct, and that
 // if the search value exists, it will be found.
 func (t *TreeRec) Search(n *Node, val int) *Node {
-	if n != nil {
-		if val == n.value {
-			return n
-		}
+	if val == n.value {
+		return n
+	}
 
-		if val < n.value {
-			if n.left != nil {
-				return t.Search(n.left, val)
-			}
-		} else {
-			if val > n.value {
-				if n.right != nil {
-					return t.Search(n.right, val)
-				}
-			}
+	if val < n.value {
+		if n.left != nil {
+			return t.Search(n.left, val)
+		}
+	}
+
+	if val > n.value {
+		if n.right != nil {
+			return t.Search(n.right, val)
 		}
 	}
 
