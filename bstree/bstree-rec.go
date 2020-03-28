@@ -11,7 +11,7 @@
 // key.
 // Example of an instance of a binary search tree with 11 nodes:
 //
-//						15
+//                      15
 //					  /    \
 //					 6      18
 //					/ \    /  \
