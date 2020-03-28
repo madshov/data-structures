@@ -75,8 +75,6 @@ func (t *TreeRec) ins(n *Node, val int) *Node {
 		if n.left != nil {
 			return t.ins(n.left, val)
 		}
-
-		return n
 	}
 
 	if n.right != nil {
