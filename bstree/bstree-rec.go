@@ -20,13 +20,13 @@
 //				 2   4  13
 //				       /
 //				      9
-package main
+package bstree
 
 import (
 	"fmt"
 )
 
-// TreeRec defines a tree structure for recursive implementation.
+// TreeRec defines a tree structure using a recursive implementation strategy.
 type TreeRec struct {
 	root  *Node
 	count int
@@ -40,8 +40,7 @@ type Node struct {
 	value  int
 }
 
-// NewBSTreeRec creates a new instance of a binary search tree with a recursive
-// approach to the implementation.
+// NewBSTreeRec creates a new instance of a TreeRec.
 func NewBSTreeRec() *TreeRec {
 	return &TreeRec{}
 }
@@ -89,8 +88,8 @@ func (t *TreeRec) ins(n *Node, val int) *Node {
 // Delete removes a node n with a given value in the tree. This function is
 // split into 3 cases, n has no children, n has one child or n has two children.
 // If n has no children, n will just be deleted. Else if n has one child, the
-// child is copied to n, and the child is deleted. Else n must has two children,
-// and n must have a successor which is copied to n and then deleted.
+// child is copied to n, and the child is deleted. Else n must have two
+// children, and n must have a successor which is copied to n and then deleted.
 func (t *TreeRec) Delete(val int) {
 	r := t.root
 	if r == nil {
@@ -296,27 +295,4 @@ func (t *TreeRec) PostOrder(n *Node) {
 // Size returns the total number of the nodes in the entire tree.
 func (t *TreeRec) Size() int {
 	return t.count
-}
-
-func main() {
-	t := NewBSTreeRec()
-	t.Insert(3)
-	t.Insert(6)
-	t.Insert(7)
-	t.Insert(4)
-	t.InOrder(t.root)
-	fmt.Println()
-	t.Delete(4)
-	t.InOrder(t.root)
-	fmt.Println()
-	t.Delete(6)
-	t.InOrder(t.root)
-	fmt.Println()
-	t.Delete(7)
-	t.InOrder(t.root)
-	fmt.Println()
-	t.Delete(3)
-	t.InOrder(t.root)
-	fmt.Println()
-
 }
