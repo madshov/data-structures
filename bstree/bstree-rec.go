@@ -20,7 +20,7 @@
 //				 2   4  13
 //				       /
 //				      9
-package bstree
+package main
 
 import (
 	"fmt"
@@ -77,8 +77,10 @@ func (t *TreeRec) ins(n *Node, val int) *Node {
 		}
 	}
 
-	if n.right != nil {
-		return t.ins(n.right, val)
+	if val > n.value {
+		if n.right != nil {
+			return t.ins(n.right, val)
+		}
 	}
 
 	return n
@@ -91,10 +93,17 @@ func (t *TreeRec) ins(n *Node, val int) *Node {
 // and n must have a successor which is copied to n and then deleted.
 func (t *TreeRec) Delete(val int) {
 	r := t.root
-	if r != nil {
-		t.del(r, val)
-		t.count--
+	if r == nil {
+		return
 	}
+
+	if val == r.value {
+		t.root = nil
+		return
+	}
+
+	t.del(r, val)
+	t.count--
 }
 
 // del is a helper function that traces down the tree and finds the first node
@@ -287,4 +296,27 @@ func (t *TreeRec) PostOrder(n *Node) {
 // Size returns the total number of the nodes in the entire tree.
 func (t *TreeRec) Size() int {
 	return t.count
+}
+
+func main() {
+	t := NewBSTreeRec()
+	t.Insert(3)
+	t.Insert(6)
+	t.Insert(7)
+	t.Insert(4)
+	t.InOrder(t.root)
+	fmt.Println()
+	t.Delete(4)
+	t.InOrder(t.root)
+	fmt.Println()
+	t.Delete(6)
+	t.InOrder(t.root)
+	fmt.Println()
+	t.Delete(7)
+	t.InOrder(t.root)
+	fmt.Println()
+	t.Delete(3)
+	t.InOrder(t.root)
+	fmt.Println()
+
 }
