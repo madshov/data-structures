@@ -60,10 +60,9 @@ func NewBSTree(par int) *Tree {
 // n is found. A simple value comparison is between n's value and the parent is
 // used to determine if n will be the left or right child of the parent.
 func (t *Tree) Insert(val int) {
-	r := t.root
-	n := &Node{nil, nil, nil, val}
 	var m *Node
 
+	r := t.root
 	// traverse down the tree to find the correct parent
 	for r != nil {
 		m = r
@@ -74,7 +73,8 @@ func (t *Tree) Insert(val int) {
 		}
 	}
 
-	n.parent = m
+	// create node n with m as parent
+	n := &Node{m, nil, nil, val}
 
 	if m == nil {
 		t.root = n
