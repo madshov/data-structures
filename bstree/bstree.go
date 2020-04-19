@@ -56,16 +56,15 @@ func NewBSTree(par int) *Tree {
 }
 
 // Insert adds a node n to the correct position in the tree, by following the
-// binary-search-tree property. The path is traced down the tree, until the
-// parent of n is found. A simple value comparison is between n's value and the
-// parent is used to determine if n will be the left or right child of the
-// parent.
+// binary-search-tree property. The tree is traversed down, until the parent of
+// n is found. A simple value comparison is between n's value and the parent is
+// used to determine if n will be the left or right child of the parent.
 func (t *Tree) Insert(val int) {
 	r := t.root
 	n := &Node{nil, nil, nil, val}
 	var m *Node
 
-	// trace down the tree to find the correct parent
+	// traverse down the tree to find the correct parent
 	for r != nil {
 		m = r
 		if val < r.value {
@@ -90,15 +89,26 @@ func (t *Tree) Insert(val int) {
 	t.count++
 }
 
-// Delete removes a node n with a given value in the tree.
+// Delete removes a given node n from the tree. The overall strategy considers
+// four different cases: n has no left child, n has just one child, n's
+// successor m is the right child of n, or m lies within n right subtree, but is
+// not n's right child.
+// Case 1: If n has no left child, n is replaced by its right child, which can
+// be nil.
+// Case 2: If n has just one child, which is the left child, n is replaced by
+// its left child.
+// Case 3: If m is the right child of m, n is replaced by m.
+// Case 4: If m is not case 3, but instead lies within n's right subtree, m is
+// replaced by it own right child, then n is replaced by m.
 func (t *Tree) Delete(n *Node) {
 	if n == nil {
 		return
 	}
 
+	// case 1, n has no left child
 	if n.left == nil {
-		// transplant n with n's right child
 		m := n.right
+		// replace n with n's right child
 		if n.parent == nil {
 			t.root = m
 		} else {
@@ -116,9 +126,10 @@ func (t *Tree) Delete(n *Node) {
 		return
 	}
 
+	// case 2, n has one child
 	if n.right == nil {
-		// transplant n with n's left child
 		m := n.left
+		// replace n with n's left child
 		if n.parent == nil {
 			t.root = m
 		} else {
@@ -136,10 +147,13 @@ func (t *Tree) Delete(n *Node) {
 		return
 	}
 
-	m := t.MinIt(n)
+	// n's successor will be the min node of the right subtree
+	m := t.Min(n.right)
+
+	// case 3, n's successor is (right) child of n
 	if m.parent != n {
-		// transplant m with m's right child
 		o := m.right
+		// replace m with m's right child
 		if n.parent == nil {
 			t.root = o
 		} else {
@@ -159,7 +173,8 @@ func (t *Tree) Delete(n *Node) {
 		o.parent = m
 	}
 
-	// transplant n with m
+	// case 4, n's successor is within n's (right) subtree
+	// replace n with m
 	if n.parent == nil {
 		t.root = m
 	} else {
@@ -181,50 +196,34 @@ func (t *Tree) Delete(n *Node) {
 	t.count--
 }
 
-// Search begins its search from the root node, and traces a simple path
-// downwards in the tree. For each node it encounters, it compares the search
-// value with n's value. If they equal, the search terminates. If the search
-// value is less than, the search continues along n's left subtree.
+// Search begins its search from the given node n, and traverse downwards in the
+// tree. For each node it encounters, it compares the search value with n's
+// value. If they equal, the search terminates. If the search value is less
+// than, the search continues along n's left subtree.
 // Symmetrically, if the search value is greater than n's value it continues
 // along n's right subtree. The binary-search-tree property ensures that this
 // is the correct, and that if the search value exists, it will be found.
 // Search is recursive and uses a helper function to maintain the recursive
 // callstack on either the left or right subtree.
-func (t *Tree) Search(val int) *Node {
-	r := t.root
-	if r == nil {
+func (t *Tree) Search(n *Node, val int) *Node {
+	if n == nil {
 		return nil
 	}
 
-	return t.sch(r, val)
-}
-
-func (t *Tree) sch(n *Node, val int) *Node {
 	if val == n.value {
 		return n
 	}
 
 	if val < n.value {
-		if n.left != nil {
-			return t.sch(n.left, val)
-		}
+		return t.Search(n.left, val)
 	}
 
-	if val > n.value {
-		if n.right != nil {
-			return t.sch(n.right, val)
-		}
-	}
-
-	return nil
+	return t.Search(n.right, val)
 }
 
-// SearchIt is simliar to Search but is iterative and uses a for loop to
-// maintain the callstack on the left or right subtree instead of a helper
-// function.
-func (t *Tree) SearchIt(val int) *Node {
-	n := t.root
-
+// SearchIt is similar to Search, but uses an iterative approach, that utilizes
+// a for loop to traverse down the tree.
+func (t *Tree) SearchIt(n *Node, val int) *Node {
 	for n != nil && val != n.value {
 		if val < n.value {
 			n = n.left
@@ -251,8 +250,8 @@ func (t *Tree) Min(n *Node) *Node {
 	return n
 }
 
-// MinIt is similar to Min, but is iterative and uses a for loop on the left
-// subtree.
+// MinIt is similar to Min, but uses an iterative approach, that utilizes a for
+// loop to traverse the left subtree.
 func (t *Tree) MinIt(n *Node) *Node {
 	if n == nil {
 		n = t.root
@@ -280,8 +279,8 @@ func (t *Tree) Max(n *Node) *Node {
 	return n
 }
 
-// MaxIt is similar to Max, but is iterative and uses a for loop on the right
-// subtree.
+// MaxIt is similar to Max, but uses an iterative approach, that utilizes a for
+// loop to traverse the right subtree.
 func (t *Tree) MaxIt(n *Node) *Node {
 	if n == nil {
 		n = t.root
@@ -316,7 +315,7 @@ func (t *Tree) Successor(n *Node) *Node {
 	return nil
 }
 
-// suc is a helper function that traces up the tree from a given node n, and
+// suc is a helper function that traverses up the tree from a given node n, and
 // checks if n is the right child of its parent. When this is false, i.e. n is a
 // left child, the function returns n's parent.
 func (t *Tree) suc(n, par *Node) *Node {
@@ -331,6 +330,8 @@ func (t *Tree) suc(n, par *Node) *Node {
 	return par
 }
 
+// SuccessorIt is similar to Successor, but uses an iterative approach that
+// utilizes a for loop to traverse up the tree.
 func (t *Tree) SuccessorIt(n *Node) *Node {
 	if n == nil {
 		n = t.root
@@ -371,7 +372,7 @@ func (t *Tree) Predecessor(n *Node) *Node {
 	return nil
 }
 
-// pre is a helper function that traces up the tree from a given node n, and
+// pre is a helper function that traverses up the tree from a given node n, and
 // checks if n is the left child of its parent. When this is false, i.e. n is a
 // right child, the function returns n's parent.
 func (t *Tree) pre(m, par *Node) *Node {
@@ -386,6 +387,8 @@ func (t *Tree) pre(m, par *Node) *Node {
 	return par
 }
 
+// PredecessorIt is similar to Predecessor, but uses an iterative approach
+// that utilizes a for loop to traverse up the tree.
 func (t *Tree) PredecessorIt(n *Node) *Node {
 	if n == nil {
 		n = t.root
@@ -424,6 +427,8 @@ func (t *Tree) InOrder(n *Node, f func(*Node)) {
 	}
 }
 
+// InOrderIt is similar to InOrder, but uses an interative approach that
+// utilizes for loops and a stack to hold nodes.
 func (t *Tree) InOrderIt(f func(*Node)) {
 	n := t.root
 	ns := make([]*Node, t.Size())
@@ -481,6 +486,8 @@ func (t *Tree) PreOrder(n *Node, f func(*Node)) {
 	}
 }
 
+// PreOrderIt is similar to PreOrder, but uses an interative approach that
+// utilizes for loops and a stack to hold nodes.
 func (t *Tree) PreOrderIt(f func(*Node)) {
 	n := t.root
 	ns := make([]*Node, t.Size())
@@ -525,6 +532,8 @@ func (t *Tree) PostOrder(n *Node, f func(*Node)) {
 	f(n)
 }
 
+// PostOrderIt is similar to PostOrder, but uses an interative approach that
+// utilizes for loops and a stack to hold nodes.
 func (t *Tree) PostOrderIt(f func(*Node)) {
 	n := t.root
 	ns := make([]*Node, t.Size())
