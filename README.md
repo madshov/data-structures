@@ -1,5 +1,11 @@
-# data-structures
-- Stack
-- Queue
-- Linked list
-- Binary search tree
+Data structures contains the following packages:
+- Algebraic
+  - Vector
+  - Matrix
+- Elementary
+  - Stack
+  - Queue
+  - Linked List
+  - Double Stack Queue
+- Tree
+  - Binary Search Tree
