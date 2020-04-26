@@ -1,5 +1,5 @@
 // Package bstree includes a common set of operations for a binary search tree,
-// i.e. insert, delete, various search operations as well as tree walk
+// i.e. insert, delete, various search operations as well as tree traversal
 // operations. A binary search tree is defined by a set nodes that satifies the
 // binary-search-tree propery:
 //     Let n be a node in a binary search tree. If m is a node in the left
@@ -36,7 +36,7 @@
 // runtime.
 package bstree
 
-// Tree defines a tree structure using a recursive implementation strategy.
+// Tree defines a tree structure with a root node and node count.
 type Tree struct {
 	root  *Node
 	count int
@@ -74,7 +74,12 @@ func (t *Tree) Insert(val int) {
 	}
 
 	// create node n with m as parent
-	n := &Node{m, nil, nil, val}
+	n := &Node{
+		parent: m,
+		left:   nil,
+		right:  nil,
+		value:  val,
+	}
 
 	if m == nil {
 		t.root = n
@@ -112,7 +117,8 @@ func (t *Tree) Delete(n *Node) {
 		if n.parent == nil {
 			t.root = m
 		} else {
-			// if n is the left child
+			// if n is the left child, update the left child of n's parent,
+			// else update right child of n's parent
 			if n == n.parent.left {
 				n.parent.left = m
 			} else {
@@ -120,9 +126,11 @@ func (t *Tree) Delete(n *Node) {
 			}
 		}
 
+		// update the parent of m to n's parent
 		if m != nil {
 			m.parent = n.parent
 		}
+
 		return
 	}
 
@@ -133,7 +141,8 @@ func (t *Tree) Delete(n *Node) {
 		if n.parent == nil {
 			t.root = m
 		} else {
-			// if n is the left child
+			// if n is the left child, update the left child of n's parent,
+			// else update right child of n's parent
 			if n == n.parent.left {
 				n.parent.left = m
 			} else {
@@ -141,9 +150,11 @@ func (t *Tree) Delete(n *Node) {
 			}
 		}
 
+		// update the parent of m to n's parent
 		if m != nil {
 			m.parent = n.parent
 		}
+
 		return
 	}
 
@@ -157,7 +168,8 @@ func (t *Tree) Delete(n *Node) {
 		if n.parent == nil {
 			t.root = o
 		} else {
-			// if n is the left child
+			// if n is the left child, update the left child of n's parent,
+			// else update right child of n's parent
 			if n == n.parent.left {
 				n.parent.left = o
 			} else {
@@ -165,6 +177,7 @@ func (t *Tree) Delete(n *Node) {
 			}
 		}
 
+		// update the parent of o to n's parent
 		if o != nil {
 			o.parent = n.parent
 		}
@@ -178,7 +191,8 @@ func (t *Tree) Delete(n *Node) {
 	if n.parent == nil {
 		t.root = m
 	} else {
-		// if n is the left child
+		// if n is the left child, update the left child of n's parent,
+		// else update right child of n's parent
 		if n == n.parent.left {
 			n.parent.left = m
 		} else {
@@ -186,6 +200,7 @@ func (t *Tree) Delete(n *Node) {
 		}
 	}
 
+	// update the parent of m to n's parent
 	if m != nil {
 		m.parent = n.parent
 	}
@@ -574,7 +589,7 @@ func (t *Tree) PostOrderIt(f func(*Node)) {
 	}
 }
 
-// Size returns the total number of the nodes in the entire tree.
+// Size returns the total number of the nodes in the tree.
 func (t *Tree) Size() int {
 	return t.count
 }

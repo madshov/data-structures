@@ -1,98 +1,143 @@
 package vector
 
 import (
+	"errors"
 	"math"
 )
 
-type Vector3d struct {
-	X, Y, Z float64
-}
-
-func NewVector3d(x, y, z float64) *Vector3d {
-	return &Vector3d{
-		X: x,
-		Y: y,
-		Z: z,
+// NewVector creates a new instance of a Vector with a given slice of
+// coordinates, and returns a pointer to it. The dimension is determined by the
+// number of coordinates.
+func NewVector(cs ...float64) *Vector {
+	return &Vector{
+		coords: cs,
 	}
 }
 
-func NewZeroVector3d() *Vector3d {
-	return &Vector3d{
-		X: 0.0,
-		Y: 0.0,
-		Z: 0.0,
+// NewZeroVector creates a new instance of a zero-filled Vector with a given
+// dimension .
+func NewZeroVector(dim int) *Vector {
+	cs := make([]float64, dim)
+	return &Vector{
+		coords: cs,
 	}
 }
 
-func (s *Vector3d) Normalized() {
-	mag := s.Magnitude()
-	if mag != 0 {
-		s.X = s.X / mag
-		s.Y = s.Y / mag
-		s.Z = s.Z / mag
-	}
+// Vector defines a vector structure with a slice of floating point coordinates.
+type Vector struct {
+	coords []float64
 }
 
-func (s *Vector3d) Magnitude() float64 {
-	l2 := (s.X * s.X) + (s.Y * s.Y) + (s.Z * s.Z)
-	if l2 == 0 {
+// Various errors a vector function can return.
+var (
+	ErrMagZero      = errors.New("vector magnitude cannot be zero")
+	ErrDimsNotEqual = errors.New("vector dimensions do not match")
+)
+
+// Dimension returns the number of coordinates for a given vector.
+func (v *Vector) Dimension() int {
+	return len(v.coords)
+}
+
+// Magnitude returns the distance from the endpoint to the origin of a given
+// vector.
+func (v *Vector) Magnitude() float64 {
+	var l float64
+	for _, c := range v.coords {
+		l += c * c
+	}
+
+	if l == 0 {
 		return 0
 	}
-	return math.Sqrt(l2)
+
+	return math.Sqrt(l)
 }
 
-func (s *Vector3d) MagnitudeSquared() float64 {
-	return (s.X * s.X) + (s.Y * s.Y) + (s.Z * s.Z)
-}
-
-func (s *Vector3d) Subtract(v *Vector3d) *Vector3d {
-	return &Vector3d{
-		X: s.X - v.X,
-		Y: s.Y - v.Y,
-		Z: s.Z - v.Z,
+// Normalize normalizes, i.e. divides each coodinate with its magnitude, a given
+// vector.
+func (v *Vector) Normalize() error {
+	mag := v.Magnitude()
+	if mag == 0 {
+		return ErrMagZero
 	}
-}
 
-func (s *Vector3d) Add(v *Vector3d) *Vector3d {
-	return &Vector3d{
-		X: s.X + v.X,
-		Y: s.Y + v.Y,
-		Z: s.Z + v.Z,
+	for k := range v.coords {
+		v.coords[k] /= mag
 	}
+
+	return nil
 }
 
-func (s *Vector3d) Multiply(v *Vector3d) *Vector3d {
-	return &Vector3d{
-		X: s.X * v.X,
-		Y: s.Y * v.Y,
-		Z: s.Z * v.Z,
+// Add adds each coordinate of two given vectors.
+func (v *Vector) Add(w *Vector) error {
+	if len(v.coords) != len(w.coords) {
+		return ErrDimsNotEqual
 	}
-}
 
-func (s *Vector3d) Divide(v *Vector3d) *Vector3d {
-	return &Vector3d{
-		X: s.X / v.X,
-		Y: s.Y / v.Y,
-		Z: s.Z / v.Z,
+	for k := range v.coords {
+		v.coords[k] += w.coords[k]
 	}
+
+	return nil
 }
 
-func (s *Vector3d) Dot(v *Vector3d) float64 {
-	return (s.X * v.X) + (s.Y * v.Y) + (s.Z * v.Z)
-}
-
-func (s *Vector3d) Multiplied(by float64) *Vector3d {
-	return &Vector3d{
-		X: s.X * by,
-		Y: s.Y * by,
-		Z: s.Z * by,
+// Sub substracts each coordinate of two given vectors.
+func (v *Vector) Sub(w *Vector) error {
+	if len(v.coords) != len(w.coords) {
+		return ErrDimsNotEqual
 	}
+
+	for k := range v.coords {
+		v.coords[k] -= w.coords[k]
+	}
+
+	return nil
 }
 
-func (s *Vector3d) Divided(by float64) *Vector3d {
-	return &Vector3d{
-		X: s.X / by,
-		Y: s.Y / by,
-		Z: s.Z / by,
+// Mul multiplies each coordinate of two given vectors.
+func (v *Vector) Mul(w *Vector) error {
+	if len(v.coords) != len(w.coords) {
+		return ErrDimsNotEqual
+	}
+
+	for k := range v.coords {
+		v.coords[k] *= w.coords[k]
+	}
+
+	return nil
+}
+
+// Div divides each coordinate of two given vectors.
+func (v *Vector) Div(w *Vector) error {
+	if len(v.coords) != len(w.coords) {
+		return ErrDimsNotEqual
+	}
+
+	for k := range v.coords {
+		v.coords[k] /= w.coords[k]
+	}
+
+	return nil
+}
+
+// Dot returns the dot product (scalar product) of two given vectors.
+func (v *Vector) Dot(w *Vector) (float64, error) {
+	if len(v.coords) != len(w.coords) {
+		return 0, ErrDimsNotEqual
+	}
+
+	var d float64
+	for k := range v.coords {
+		d += v.coords[k] * w.coords[k]
+	}
+
+	return d, nil
+}
+
+// Scale scales each coordinate in a given vector with a given scalar value.
+func (v *Vector) Scale(scalar float64) {
+	for k := range v.coords {
+		v.coords[k] *= scalar
 	}
 }

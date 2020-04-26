@@ -1,76 +1,73 @@
+// Package stack includes a common set of operations for a stack data structure,
+// i.e. peek, push, pop, as well as a stack traversal operation.
 package stack
-
-import (
-	"fmt"
-)
 
 // NewStack creates a new instance of a Stack, and returns a pointer to it.
 func NewStack() *Stack {
-	return &Stack{nil}
+	return &Stack{}
 }
 
+// Stack defines a stack structure with a top element and a count of the
+// elements in it.
 type Stack struct {
-	top *node
+	top   *Element
+	count int
 }
 
-type node struct {
-	next  *node
+// Element defines an element of the stack.
+type Element struct {
+	next  *Element
 	value int
 }
 
+// IsEmpty checks if the stack is empty.
 func (s *Stack) IsEmpty() bool {
 	return s.top == nil
 }
 
-func (s *Stack) Peek() int {
-	if s.top != nil {
-		return s.top.value
-	}
-
-	return 0
+// Peek returns the top element of the stack. The element is not pushed.
+func (s *Stack) Peek() *Element {
+	return s.top
 }
 
+// Push adds an element to the top of the stack.
 func (s *Stack) Push(val int) {
-	n := node{nil, val}
-	n.next = s.top
-	s.top = &n
-}
-
-func (s *Stack) Pop() int {
-	if s.top != nil {
-		val := s.top.value
-		s.top = s.top.next
-		return val
+	e := &Element{
+		next:  s.top,
+		value: val,
 	}
 
-	return 0
+	s.top = e
+	s.count++
 }
 
-func (s *Stack) Print() {
-	current := s.top
-	if current != nil {
-		fmt.Printf("%d ", current.value)
-		for current.next != nil {
-			current = current.next
-			fmt.Printf("%d ", current.value)
+// Pop removes and returns the top element of the stack, unless the stack
+// underflows.
+func (s *Stack) Pop() *Element {
+	if !s.IsEmpty() {
+		e := s.top
+		s.top = e.next
+		s.count--
+		return e
+	}
+
+	return nil
+}
+
+// Traverse loops through each node in the stack.
+func (s *Stack) Traverse(f func(*Element)) {
+	e := s.top
+	if e != nil {
+		f(e)
+
+		for e.next != nil {
+			e = e.next
+			f(e)
 		}
 	}
 }
 
-/*
-func main() {
-	s := stack{nil}
-	s.push(4)
-	s.push(5)
-	s.push(6)
-
-	s.print()
-	fmt.Println()
-	fmt.Printf("%v\n", s.pop())
-	s.print()
-	fmt.Println()
-	fmt.Printf("%v\n", s.pop())
-	fmt.Printf("%v\n", s.pop())
-	s.print()
+// Size returns the total number of the element in the stack.
+func (s *Stack) Size() int {
+	return s.count
 }
-*/

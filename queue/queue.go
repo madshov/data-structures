@@ -1,76 +1,87 @@
+// Package queue includes a common set of operations for a queue data structure,
+// i.e. peek, enqueue, dequeue, as well as a queue traversal operation.
 package queue
-
-import (
-	"fmt"
-)
 
 // NewQueue creates a new instance of a Queue, and returns a pointer to it.
 func NewQueue() *Queue {
-	return &Queue{nil, nil}
+	return &Queue{}
 }
 
-// Queue holds a node pointers to first and last elements of the queue
-// respectively.
+// Queue defines a queue structure with a head and tail element and a count of
+// the elements in it.
 type Queue struct {
-	head *node
-	tail *node
+	head  *Element
+	tail  *Element
+	count int
 }
 
-type node struct {
-	next  *node
+// Element defines an element of the queue.
+type Element struct {
+	next  *Element
 	value int
 }
 
-// IsEmpty returns whether queue is empty or not.
+// IsEmpty checks if the queue is empty.
 func (q *Queue) IsEmpty() bool {
 	return q.head == nil
 }
 
-// Peek returns the value of the first element in the queue. The element will
-// not be dequeued.
-func (q *Queue) Peek() int {
-	if q.head != nil {
-		return q.head.value
-	}
-
-	return 0
+// Peek returns the head element of the queue. The element is not be dequeued.
+func (q *Queue) Peek() *Element {
+	return q.head
 }
 
-// Enqueue adds an element to the queue.
+// Enqueue adds an element to the tail of the queue.
 func (q *Queue) Enqueue(val int) {
-	node := node{nil, val}
-	if q.tail != nil {
-		q.tail.next = &node
+	e := Element{
+		next:  nil,
+		value: val,
 	}
-	q.tail = &node
+
+	if q.tail != nil {
+		q.tail.next = &e
+	} else {
+		q.tail = &e
+	}
 
 	if q.head == nil {
-		q.head = &node
+		q.head = &e
 	}
+
+	q.count++
 }
 
-// Dequeue removes an element from the queue and returns its value.
-func (q *Queue) Dequeue() int {
-	if q.head != nil {
-		val := q.head.value
+// Dequeue removes and returns the head element of the queue, unless the queue
+// underflows.
+func (q *Queue) Dequeue() *Element {
+	if !q.IsEmpty() {
+		e := q.head
 		q.head = q.head.next
+
 		if q.head == nil {
 			q.tail = nil
 		}
-		return val
+		q.count--
+		return e
 	}
 
-	return 0
+	return nil
 }
 
-// Print prints a visual representation of the queue to stdout.
-func (q *Queue) Print() {
-	current := q.head
-	if current != nil {
-		fmt.Printf("%d ", current.value)
-		for current.next != nil {
-			current = current.next
-			fmt.Printf("%d ", current.value)
+// Traverse loops through each node in the queue.
+func (q *Queue) Traverse(f func(*Element)) {
+	e := q.head
+	if e != nil {
+		f(e)
+
+		for e.next != nil {
+			e = e.next
+			f(e)
 		}
 	}
+}
+
+// Size returns the total number of the element in the queue.
+func (q *Queue) Size() int {
+	return q.count
 }
