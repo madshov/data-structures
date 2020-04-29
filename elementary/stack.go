@@ -2,6 +2,13 @@
 // i.e. peek, push, pop, as well as a stack traversal operation.
 package elementary
 
+import "errors"
+
+// Various errors a stack function can return.
+var (
+	ErrStackUnderflow = errors.New("stack underflow")
+)
+
 // NewStack creates a new instance of a Stack, and returns a pointer to it.
 func NewStack() *Stack {
 	return &Stack{}
@@ -37,18 +44,18 @@ func (s *Stack) Push(val int) {
 
 // Pop removes and returns the top element of the stack, unless the stack
 // underflows.
-func (s *Stack) Pop() *Element {
-	if !s.IsEmpty() {
-		e := s.top
-		s.top = e.next
-		s.count--
-		return e
+func (s *Stack) Pop() (*Element, error) {
+	if s.IsEmpty() {
+		return nil, ErrStackUnderflow
 	}
 
-	return nil
+	e := s.top
+	s.top = e.next
+	s.count--
+	return e, nil
 }
 
-// Traverse loops through each node in the stack.
+// Traverse loops through each element in the stack.
 func (s *Stack) Traverse(f func(*Element)) {
 	e := s.top
 	if e != nil {

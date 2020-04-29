@@ -1,84 +1,86 @@
 package elementary
 
 import (
-	"fmt"
+	"errors"
+)
+
+// Various errors a list function can return.
+var (
+	ErrListUnderflow    = errors.New("list underflow")
+	ErrNoElementWithVal = errors.New("no element with value exists in list")
 )
 
 // NewLinkedList creates a new instance of a list
-func NewLinkedList(val int) *list {
-	return &list{
-		&node{nil, val},
+func NewLinkedList() *List {
+	return &List{
+		head: nil,
 	}
 }
 
-type node struct {
-	next  *node
-	value int
+type List struct {
+	head *Element
 }
 
-type list struct {
-	head *node
+// IsEmpty checks if the list is empty.
+func (l *List) IsEmpty() bool {
+	return l.head == nil
 }
 
-func (l *list) Append(val int) {
-	current := l.head
-	for current.next != nil {
-		current = current.next
+func (l *List) Append(val int) {
+	e := &Element{
+		next:  nil,
+		value: val,
 	}
 
-	node := node{nil, val}
-	current.next = &node
+	h := l.head
+	for h.next != nil {
+		h = h.next
+	}
+
+	h.next = e
 }
 
-func (l *list) Prepend(val int) {
-	new := node{l.head, val}
-	l.head = &new
+func (l *List) Prepend(val int) {
+	e := &Element{
+		next:  l.head,
+		value: val,
+	}
+
+	l.head = e
 }
 
-func (l *list) Delete(val int) {
-	current := l.head
-	if current.value == val {
-		l.head = current.next
+func (l *List) Delete(val int) (*Element, error) {
+	if l.IsEmpty() {
+		return nil, ErrQueueUnderflow
+	}
+
+	if l.head.value == val {
+		l.head = l.head.next
 	} else {
-		for current.next != nil {
-			if current.next.value == val {
-				current.next = current.next.next
-				break
+		h := l.head
+		for h.next != nil {
+			e := h.next
+			if e.value == val {
+				h.next = e.next
+				return e, nil
 			}
-			current = current.next
+
+			h = h.next
+		}
+	}
+
+	return nil, ErrNoElementWithVal
+}
+
+// Traverse loops through each element in the list.
+func (l *List) Traverse(f func(*Element)) {
+	e := l.head
+	if e != nil {
+		f(e)
+
+		for e.next != nil {
+			e = e.next
+			f(e)
 		}
 	}
 }
-
-func (l *list) Print() {
-	current := l.head
-	fmt.Printf("%d ", current.value)
-	for current.next != nil {
-		current = current.next
-		fmt.Printf("%d ", current.value)
-	}
-}
-
-/*
-func main() {
-	head := node{nil,1}
-	l := list{&head}
-	l.append(2)
-	l.append(4)
-	l.append(10)
-	l.append(3)
-	l.append(17)
-	l.prepend(5)
-	l.prepend(4)
-	l.print()
-	l.delete(5)
-	fmt.Println()
-	l.print()
-	l.delete(4)
-	fmt.Println()
-	l.print()
-	l.delete(10)
-	fmt.Println()
-	l.print()
-}
-*/

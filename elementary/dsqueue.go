@@ -25,7 +25,7 @@ func (q *DSQueue) Peek() int {
 	if !q.IsEmpty() {
 		if q.s1.IsEmpty() {
 			for {
-				v := q.s0.Pop()
+				v, _ := q.s0.Pop()
 				if v.value == 0 {
 					break
 				}
@@ -49,7 +49,7 @@ func (q *DSQueue) Dequeue() int {
 	if !q.IsEmpty() {
 		if q.s1.IsEmpty() {
 			for {
-				v := q.s0.Pop()
+				v, _ := q.s0.Pop()
 				if v.value == 0 {
 					break
 				}

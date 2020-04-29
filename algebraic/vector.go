@@ -13,13 +13,30 @@ var (
 	ErrDimsNotEqual     = errors.New("vector dimensions do not match")
 )
 
-// NewVector creates a new instance of a Vector with a given slice of
-// coordinates, and returns a pointer to it. The dimension is determined by the
-// number of coordinates.
-func NewVector(cs ...float64) *Vector {
+// NewVector creates a new instance of a Vector with a given dimension and a
+// slice of coordinates, and returns a pointer to it. If the dimension is
+// greater than the number of coordinates, the remaining indexes of the vector
+// will be zero-filled. If the dimension is less, the remaining coordinates will
+// be ignored.
+func NewVector(dim int, coords ...float64) (*Vector, error) {
+	if dim < 0 {
+		return nil, ErrInvalidDim
+	}
+
+	cs := make([]float64, dim)
+	var i int
+	for i < dim {
+		if i < len(coords) {
+			cs[i] = coords[i]
+		} else {
+			cs[i] = 0.0
+		}
+		i++
+	}
+
 	return &Vector{
 		coords: cs,
-	}
+	}, nil
 }
 
 // NewZeroVector creates a new instance of a zero-filled vector with a given
@@ -39,7 +56,7 @@ func NewZeroVector(dim int) (*Vector, error) {
 // given dimension.
 func NewUnitVector(dim, coord int) (*Vector, error) {
 	if dim < 0 {
-		return nil, ErrCoordOutOfBounds
+		return nil, ErrInvalidDim
 	}
 
 	if dim < coord {
@@ -47,7 +64,7 @@ func NewUnitVector(dim, coord int) (*Vector, error) {
 	}
 
 	cs := make([]float64, dim)
-	cs[coord-1] = 1.0
+	cs[coord] = 1.0
 
 	return &Vector{
 		coords: cs,
@@ -165,8 +182,4 @@ func (v *Vector) Scale(scalar float64) {
 	for k := range v.coords {
 		v.coords[k] *= scalar
 	}
-}
-
-func (v *Vector) Coords() []float64 {
-	return v.coords
 }

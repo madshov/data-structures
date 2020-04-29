@@ -2,6 +2,13 @@
 // i.e. peek, enqueue, dequeue, as well as a queue traversal operation.
 package elementary
 
+import "errors"
+
+// Various errors a queue function can return.
+var (
+	ErrQueueUnderflow = errors.New("queue underflow")
+)
+
 // NewQueue creates a new instance of a Queue, and returns a pointer to it.
 func NewQueue() *Queue {
 	return &Queue{}
@@ -53,19 +60,19 @@ func (q *Queue) Enqueue(val int) {
 
 // Dequeue removes and returns the head element of the queue, unless the queue
 // underflows.
-func (q *Queue) Dequeue() *Element {
-	if !q.IsEmpty() {
-		e := q.head
-		q.head = q.head.next
-
-		if q.head == nil {
-			q.tail = nil
-		}
-		q.count--
-		return e
+func (q *Queue) Dequeue() (*Element, error) {
+	if q.IsEmpty() {
+		return nil, ErrQueueUnderflow
 	}
 
-	return nil
+	e := q.head
+	q.head = q.head.next
+
+	if q.head == nil {
+		q.tail = nil
+	}
+	q.count--
+	return e, nil
 }
 
 // Traverse loops through each node in the queue.
