@@ -17,14 +17,14 @@ func NewQueue() *Queue {
 // Queue defines a queue structure with a head and tail element and a count of
 // the elements in it.
 type Queue struct {
-	head  *Element
-	tail  *Element
+	head  *QueueElement
+	tail  *QueueElement
 	count int
 }
 
-// Element defines an element of the queue.
-type Element struct {
-	next  *Element
+// QueueElement defines an element of the queue.
+type QueueElement struct {
+	next  *QueueElement
 	value int
 }
 
@@ -34,13 +34,13 @@ func (q *Queue) IsEmpty() bool {
 }
 
 // Peek returns the head element of the queue. The element is not be dequeued.
-func (q *Queue) Peek() *Element {
+func (q *Queue) Peek() *QueueElement {
 	return q.head
 }
 
 // Enqueue adds an element to the tail of the queue.
 func (q *Queue) Enqueue(val int) {
-	e := Element{
+	e := QueueElement{
 		next:  nil,
 		value: val,
 	}
@@ -60,7 +60,7 @@ func (q *Queue) Enqueue(val int) {
 
 // Dequeue removes and returns the head element of the queue, unless the queue
 // underflows.
-func (q *Queue) Dequeue() (*Element, error) {
+func (q *Queue) Dequeue() (*QueueElement, error) {
 	if q.IsEmpty() {
 		return nil, ErrQueueUnderflow
 	}
@@ -76,7 +76,7 @@ func (q *Queue) Dequeue() (*Element, error) {
 }
 
 // Traverse loops through each node in the queue.
-func (q *Queue) Traverse(f func(*Element)) {
+func (q *Queue) Traverse(f func(*QueueElement)) {
 	e := q.head
 	if e != nil {
 		f(e)

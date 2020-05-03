@@ -14,10 +14,16 @@ func NewStack() *Stack {
 	return &Stack{}
 }
 
+// StackElement defines an element of the stack.
+type StackElement struct {
+	next  *StackElement
+	value int
+}
+
 // Stack defines a stack structure with a top element and a count of the
 // elements in it.
 type Stack struct {
-	top   *Element
+	top   *StackElement
 	count int
 }
 
@@ -27,13 +33,13 @@ func (s *Stack) IsEmpty() bool {
 }
 
 // Peek returns the top element of the stack. The element is not pushed.
-func (s *Stack) Peek() *Element {
+func (s *Stack) Peek() *StackElement {
 	return s.top
 }
 
 // Push adds an element to the top of the stack.
 func (s *Stack) Push(val int) {
-	e := &Element{
+	e := &StackElement{
 		next:  s.top,
 		value: val,
 	}
@@ -44,7 +50,7 @@ func (s *Stack) Push(val int) {
 
 // Pop removes and returns the top element of the stack, unless the stack
 // underflows.
-func (s *Stack) Pop() (*Element, error) {
+func (s *Stack) Pop() (*StackElement, error) {
 	if s.IsEmpty() {
 		return nil, ErrStackUnderflow
 	}
@@ -56,7 +62,7 @@ func (s *Stack) Pop() (*Element, error) {
 }
 
 // Traverse loops through each element in the stack.
-func (s *Stack) Traverse(f func(*Element)) {
+func (s *Stack) Traverse(f func(*StackElement)) {
 	e := s.top
 	if e != nil {
 		f(e)
