@@ -28,12 +28,16 @@ type QueueElement struct {
 	value int
 }
 
+func (qe *QueueElement) Value() int {
+	return qe.value
+}
+
 // IsEmpty checks if the queue is empty.
 func (q *Queue) IsEmpty() bool {
 	return q.head == nil
 }
 
-// Peek returns the head element of the queue. The element is not be dequeued.
+// Peek returns the head element of the queue. The element is not dequeued.
 func (q *Queue) Peek() *QueueElement {
 	return q.head
 }
@@ -88,7 +92,7 @@ func (q *Queue) Traverse(f func(*QueueElement)) {
 	}
 }
 
-// Size returns the total number of the element in the queue.
+// Size returns the total number of elements in the queue.
 func (q *Queue) Size() int {
 	return q.count
 }

@@ -20,6 +20,10 @@ type StackElement struct {
 	value int
 }
 
+func (se *StackElement) Value() int {
+	return se.value
+}
+
 // Stack defines a stack structure with a top element and a count of the
 // elements in it.
 type Stack struct {
@@ -74,7 +78,7 @@ func (s *Stack) Traverse(f func(*StackElement)) {
 	}
 }
 
-// Size returns the total number of the element in the stack.
+// Size returns the total number elements in the stack.
 func (s *Stack) Size() int {
 	return s.count
 }
