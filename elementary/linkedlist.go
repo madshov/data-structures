@@ -22,7 +22,8 @@ var (
 func NewLinkedList() *List {
 	// create sentinel value
 	s := &ListElement{
-		value: 0,
+		Key:   "",
+		Value: 0,
 	}
 	s.next = s
 	s.prev = s
@@ -43,7 +44,8 @@ type List struct {
 type ListElement struct {
 	next  *ListElement
 	prev  *ListElement
-	value int
+	Key   string
+	Value int
 }
 
 // IsEmpty checks if the list is empty, by comparing the sentinel's next and
@@ -54,40 +56,41 @@ func (l *List) IsEmpty() bool {
 
 // Insert adds a new element with a given value to the list, by inserting it
 // right after the sentinel.
-func (l *List) Insert(val int) {
-	e := &ListElement{
+func (l *List) Insert(key string, val int) {
+	el := &ListElement{
 		next:  l.sent.next,
 		prev:  l.sent,
-		value: val,
+		Key:   key,
+		Value: val,
 	}
 
 	// insert element between sentinel and the currently next element.
-	l.sent.next.prev = e
-	l.sent.next = e
+	l.sent.next.prev = el
+	l.sent.next = el
 }
 
-// Search searches for an element with a given value by iteratively checking the
+// Search searches for an element with a given key by iteratively checking the
 // next element of the list.
-func (l *List) Search(val int) *ListElement {
-	e := l.sent.next
-	for e != l.sent {
-		if e.value == val {
-			return e
+func (l *List) Search(key string) (*ListElement, bool) {
+	el := l.sent.next
+	for el != l.sent {
+		if el.Key == key {
+			return el, true
 		}
-		e = e.next
+		el = el.next
 	}
 
-	return nil
+	return nil, false
 }
 
 // Delete removes a given element from the list.
-func (l *List) Delete(e *ListElement) error {
-	if e == l.sent {
+func (l *List) Delete(el *ListElement) error {
+	if el == l.sent {
 		return ErrDeleteSentinel
 	}
 
-	e.prev.next = e.next
-	e.next.prev = e.prev
+	el.prev.next = el.next
+	el.next.prev = el.prev
 
 	return nil
 }
@@ -95,9 +98,9 @@ func (l *List) Delete(e *ListElement) error {
 // Traverse loops through each element in the list until it reaches the
 // sentinel.
 func (l *List) Traverse(f func(*ListElement)) {
-	e := l.sent.next
-	for e != l.sent {
-		f(e)
-		e = e.next
+	el := l.sent.next
+	for el != l.sent {
+		f(el)
+		el = el.next
 	}
 }

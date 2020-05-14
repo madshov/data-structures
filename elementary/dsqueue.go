@@ -29,7 +29,7 @@ func (q *DSQueue) IsEmpty() bool {
 
 // Peek returns the head element of the queue. The element is not dequeued.
 // The head element is the top element of stack1. If empty, all elements of
-// stack0, must be pused to stack1 first.
+// stack0, must be pushed to stack1 first.
 func (q *DSQueue) Peek() *StackElement {
 	if q.s1.IsEmpty() {
 		n, _ := q.s0.Pop()
