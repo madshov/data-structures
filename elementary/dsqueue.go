@@ -1,9 +1,14 @@
 package elementary
 
 // NewDSQueue creates a new instance of a queue structure based on two stacks
-// called stack0 and stack1. Stack0 will be used as the main stack, while stack1
-// will be used to queue elements until stack0 is empty. Elements may therefore,
-// be popped from stack0 and pushed to stack1 in the same operation.
+// called stack0 and stack1. Like Queue, DSQueue implements a LIFO policy, with
+// the basic operations peek, enqueue and dequeue. DSQueue contains two stacks
+// called S0 and s1. s0 will be used as the main stack, while s1 will be used to
+// queue elements until s0 is empty. Elements may therefore, be popped from s0
+// and pushed to s1 within the same operation. The LIFO policy will always be
+// maintained. The enqueue operation is done in O(1) time, while both peek and
+// dequeue are done in O(n), so there is no avantage in using DSQueue compared
+// to using Queue.
 func NewDSQueue() *DSQueue {
 	s0 := NewStack()
 	s1 := NewStack()
@@ -27,14 +32,14 @@ func (q *DSQueue) IsEmpty() bool {
 	return q.s0.IsEmpty() && q.s1.IsEmpty()
 }
 
-// Peek returns the head element of the queue. The element is not dequeued.
-// The head element is the top element of stack1. If empty, all elements of
-// stack0, must be pushed to stack1 first.
+// Peek returns the head element of the queue. The element is not dequeued. The
+// head element is the top element of s1. If empty, all elements of s0, must be
+// pushed to s1 first.
 func (q *DSQueue) Peek() *StackElement {
 	if q.s1.IsEmpty() {
 		n, _ := q.s0.Pop()
 		for n != nil {
-			q.s1.Push(n.value)
+			q.s1.Push(n.Value)
 			n, _ = q.s0.Pop()
 		}
 	}
@@ -42,20 +47,20 @@ func (q *DSQueue) Peek() *StackElement {
 	return q.s1.Peek()
 }
 
-// Enqueue adds an element to the tail of the queue, by pushing it on to stack0.
+// Enqueue adds an element to the tail of the queue, by pushing it on to s0.
 func (q *DSQueue) Enqueue(val int) {
 	q.s0.Push(val)
 	q.count++
 }
 
 // Dequeue removes and returns the head element of the queue, unless the queue
-// underflows. The head element is the top element of stack1. If empty, all
-// elements of stack0, must be pused to stack1 first.
+// underflows. The head element is the top element of s1. If empty, all elements
+// of s0, must be pused to stack1 first.
 func (q *DSQueue) Dequeue() (*StackElement, error) {
 	if q.s1.IsEmpty() {
 		e, _ := q.s0.Pop()
 		for e != nil {
-			q.s1.Push(e.value)
+			q.s1.Push(e.Value)
 			e, _ = q.s0.Pop()
 		}
 	}
@@ -70,50 +75,49 @@ func (q *DSQueue) Dequeue() (*StackElement, error) {
 }
 
 // Traverse loops through each element in the queue. Elements will be moved
-// around between stack0 and stack1, but the initial state will reoptained
-// at the end.
+// around between s0 and s1, but the initial state will reoptained at the end.
 func (q *DSQueue) Traverse(f func(*StackElement)) {
 	var c int
 
 	// pop and call function on each element
-	// in stack1 and push to stack0
+	// in s1 and push to s0
 	for {
 		e, _ := q.s1.Pop()
 		if e == nil {
 			break
 		} else {
 			f(e)
-			q.s0.Push(e.value)
+			q.s0.Push(e.Value)
 			c++
 		}
 	}
 
-	// restore stack1 to initial state
+	// restore s1 to initial state
 	for c > 0 {
 		e, _ := q.s0.Pop()
-		q.s1.Push(e.value)
+		q.s1.Push(e.Value)
 		c--
 	}
 
-	// pop all elements from stack0 and
-	// push to stack1
+	// pop all elements from s0 and push
+	// to s1
 	for {
 		e, _ := q.s0.Pop()
 		if e == nil {
 			break
 		} else {
-			q.s1.Push(e.value)
+			q.s1.Push(e.Value)
 			c++
 		}
 	}
 
 	// pop and call function on each pushed
-	// element in stack1 and push to stack
-	// to restore to initial state
+	// element in s1 and push to stack to
+	// restore to initial state
 	for c > 0 {
 		e, _ := q.s1.Pop()
 		f(e)
-		q.s0.Push(e.value)
+		q.s0.Push(e.Value)
 		c--
 	}
 }
