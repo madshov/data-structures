@@ -1,5 +1,3 @@
-// Package queue includes a common set of operations for a queue data structure,
-// i.e. peek, enqueue, dequeue, as well as a queue traversal operation.
 package elementary
 
 import "errors"
@@ -9,7 +7,14 @@ var (
 	ErrQueueUnderflow = errors.New("queue underflow")
 )
 
-// NewQueue creates a new instance of a Queue, and returns a pointer to it.
+// NewQueue creates a new instance of a Queue data structure. It's a basic queue
+// that implements a FIFO policy, with the basic operations peek, enqueue and
+// dequeue. Queue contains a head and a tail pointer to the first and last
+// elements of the queue. When an element is enqueued. it takes its place at the
+// tail of the queue. When an element is dequeued, it is always from the head at
+// the queue. Queue has no upper bound on the number of elements, so it cannot
+// overflow. Attempts to dequeue from an empty queue will cause the queue to
+// underflow. All three operations are done in O(1) time.
 func NewQueue() *Queue {
 	return &Queue{}
 }
@@ -25,11 +30,7 @@ type Queue struct {
 // QueueElement defines an element of the queue.
 type QueueElement struct {
 	next  *QueueElement
-	value int
-}
-
-func (qe *QueueElement) Value() int {
-	return qe.value
+	Value int
 }
 
 // IsEmpty checks if the queue is empty.
@@ -46,7 +47,7 @@ func (q *Queue) Peek() *QueueElement {
 func (q *Queue) Enqueue(val int) {
 	e := QueueElement{
 		next:  nil,
-		value: val,
+		Value: val,
 	}
 
 	if q.tail != nil {
