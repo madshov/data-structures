@@ -183,3 +183,7 @@ func (v *Vector) Scale(scalar float64) {
 		v.coords[k] *= scalar
 	}
 }
+
+func (v *Vector) GetCoord(coord int) float64 {
+	return v.coords[coord]
+}
