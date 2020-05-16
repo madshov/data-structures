@@ -1,5 +1,3 @@
-// Package stack includes a common set of operations for a stack data structure,
-// i.e. peek, push, pop, as well as a stack traversal operation.
 package elementary
 
 import "errors"
@@ -9,7 +7,14 @@ var (
 	ErrStackUnderflow = errors.New("stack underflow")
 )
 
-// NewStack creates a new instance of a Stack, and returns a pointer to it.
+// NewStack creates a new instance of a Stack data structure. It's a basic stack
+// that implements a LIFO policy, with the basic operations peek, pop and push.
+// Stack contains a top pointer to the top element of the stack. When an element
+// is pushed, it takes its place at the top of the stack. When an element is
+// popped, it is always from the top of the stack. Stack has no upper bound on
+// the number of elements, so it cannot overflow. Attempts to pop from an empty
+// stack will cause the tack to underflow. All three operations are done in O(1)
+// time.
 func NewStack() *Stack {
 	return &Stack{}
 }
@@ -17,11 +22,7 @@ func NewStack() *Stack {
 // StackElement defines an element of the stack.
 type StackElement struct {
 	next  *StackElement
-	value int
-}
-
-func (se *StackElement) Value() int {
-	return se.value
+	Value int
 }
 
 // Stack defines a stack structure with a top element and a count of the
@@ -45,7 +46,7 @@ func (s *Stack) Peek() *StackElement {
 func (s *Stack) Push(val int) {
 	e := &StackElement{
 		next:  s.top,
-		value: val,
+		Value: val,
 	}
 
 	s.top = e
