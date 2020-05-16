@@ -112,76 +112,82 @@ func (v *Vector) Normalize() error {
 }
 
 // Add adds each coordinate of two given vectors.
-func (v *Vector) Add(w *Vector) error {
-	if len(v.coords) != len(w.coords) {
-		return ErrDimsNotEqual
+func (v *Vector) Add(w *Vector) *Vector {
+	rv := &Vector{
+		coords: make([]float64, v.Dimension()),
 	}
 
-	for k := range v.coords {
-		v.coords[k] += w.coords[k]
+	for k, c := range v.coords {
+		rv.coords[k] = c + w.coords[k]
 	}
 
-	return nil
+	return rv
 }
 
 // Sub substracts each coordinate of two given vectors.
-func (v *Vector) Sub(w *Vector) error {
-	if len(v.coords) != len(w.coords) {
-		return ErrDimsNotEqual
+func (v *Vector) Sub(w *Vector) *Vector {
+	rv := &Vector{
+		coords: make([]float64, v.Dimension()),
 	}
 
-	for k := range v.coords {
-		v.coords[k] -= w.coords[k]
+	for k, c := range v.coords {
+		rv.coords[k] = c - w.coords[k]
 	}
 
-	return nil
+	return rv
 }
 
 // Mul multiplies each coordinate of two given vectors.
-func (v *Vector) Mul(w *Vector) error {
-	if len(v.coords) != len(w.coords) {
-		return ErrDimsNotEqual
+func (v *Vector) Mul(w *Vector) *Vector {
+	rv := &Vector{
+		coords: make([]float64, v.Dimension()),
 	}
 
-	for k := range v.coords {
-		v.coords[k] *= w.coords[k]
+	for k, c := range v.coords {
+		rv.coords[k] = c * w.coords[k]
 	}
 
-	return nil
+	return rv
 }
 
 // Div divides each coordinate of two given vectors.
-func (v *Vector) Div(w *Vector) error {
-	if len(v.coords) != len(w.coords) {
-		return ErrDimsNotEqual
+func (v *Vector) Div(w *Vector) *Vector {
+	rv := &Vector{
+		coords: make([]float64, v.Dimension()),
 	}
 
-	for k := range v.coords {
-		v.coords[k] /= w.coords[k]
+	for k, c := range v.coords {
+		rv.coords[k] = c / w.coords[k]
 	}
 
-	return nil
+	return rv
 }
 
 // Dot returns the dot product (scalar product) of two given vectors.
 func (v *Vector) Dot(w *Vector) (float64, error) {
-	if len(v.coords) != len(w.coords) {
+	if v.Dimension() != w.Dimension() {
 		return 0, ErrDimsNotEqual
 	}
 
 	var d float64
-	for k := range v.coords {
-		d += v.coords[k] * w.coords[k]
+	for k, c := range v.coords {
+		d += c * w.coords[k]
 	}
 
 	return d, nil
 }
 
 // Scale scales each coordinate in a given vector with a given scalar value.
-func (v *Vector) Scale(scalar float64) {
-	for k := range v.coords {
-		v.coords[k] *= scalar
+func (v *Vector) Scale(scalar float64) *Vector {
+	rv := &Vector{
+		coords: make([]float64, v.Dimension()),
 	}
+
+	for k, c := range v.coords {
+		rv.coords[k] = c * scalar
+	}
+
+	return rv
 }
 
 func (v *Vector) GetCoord(coord int) float64 {
