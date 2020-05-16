@@ -8,7 +8,8 @@ import (
 
 // Various errors a list function can return.
 var (
-	ErrNonExistingKey = errors.New("object does not exist for key")
+	ErrNonExistingKey = errors.New("key does not exist")
+	ErrExistingKey    = errors.New("key already exists")
 	ErrInternal       = errors.New("internal error")
 )
 
@@ -42,9 +43,15 @@ type HashTable struct {
 }
 
 // Insert adds a given key and value pair to the hash table.
-func (ht *HashTable) Insert(key string, val int) {
+func (ht *HashTable) Insert(key string, val int) error {
 	idx := ht.hasher.Hash(0, ht.size, key)
+	_, exists := ht.list[idx].Search(key)
+	if exists {
+		return ErrExistingKey
+	}
 	ht.list[idx].Insert(key, val)
+
+	return nil
 }
 
 // Search looks for an object with a given key and, if it exists, returns its
