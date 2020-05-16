@@ -164,17 +164,13 @@ func (v *Vector) Div(w *Vector) *Vector {
 }
 
 // Dot returns the dot product (scalar product) of two given vectors.
-func (v *Vector) Dot(w *Vector) (float64, error) {
-	if v.Dimension() != w.Dimension() {
-		return 0, ErrDimsNotEqual
-	}
-
+func (v *Vector) Dot(w *Vector) float64 {
 	var d float64
 	for k, c := range v.coords {
 		d += c * w.coords[k]
 	}
 
-	return d, nil
+	return d
 }
 
 // Scale scales each coordinate in a given vector with a given scalar value.
