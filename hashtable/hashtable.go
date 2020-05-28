@@ -24,7 +24,7 @@ func New(s int, h Hasher) *HashTable {
 
 	// set default hashing method
 	if h == nil {
-		h = MulHash{}
+		h = MulHash{s}
 	}
 
 	return &HashTable{
@@ -44,7 +44,7 @@ type HashTable struct {
 
 // Insert adds a given key and value pair to the hash table.
 func (ht *HashTable) Insert(key string, val int) error {
-	idx := ht.hasher.Hash(0, ht.size, key)
+	idx := ht.hasher.Hash(key)
 	_, exists := ht.list[idx].Search(key)
 	if exists {
 		return ErrExistingKey
@@ -57,7 +57,7 @@ func (ht *HashTable) Insert(key string, val int) error {
 // Search looks for an object with a given key and, if it exists, returns its
 // value in the hash table.
 func (ht *HashTable) Search(key string) (int, bool) {
-	idx := ht.hasher.Hash(0, ht.size, key)
+	idx := ht.hasher.Hash(key)
 	obj, exists := ht.list[idx].Search(key)
 	if !exists {
 		return 0, false
@@ -69,7 +69,7 @@ func (ht *HashTable) Search(key string) (int, bool) {
 // Delete looks for an object with a given key and, if it exists, deletes it
 // from the hash table.
 func (ht *HashTable) Delete(key string) error {
-	idx := ht.hasher.Hash(0, ht.size, key)
+	idx := ht.hasher.Hash(key)
 	obj, exists := ht.list[idx].Search(key)
 	if !exists {
 		return ErrNonExistingKey
@@ -84,5 +84,5 @@ func (ht *HashTable) Delete(key string) error {
 
 // Hasher is the hasher used for the hash table operations.
 type Hasher interface {
-	Hash(int, int, string) int
+	Hash(string) int
 }
