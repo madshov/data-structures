@@ -1,15 +1,32 @@
-// Package bstree includes a common set of operations for a binary search tree,
-// i.e. insert, delete, various search operations as well as tree traversal
-// operations. A binary search tree is defined by a set nodes that satifies the
-// binary-search-tree propery:
+package tree
+
+import "fmt"
+
+// BSTree defines a tree structure with a root node and node count.
+type BSTree struct {
+	root  *BSNode
+	count int
+}
+
+// BSNode defines a node of the binary search tree.
+type BSNode struct {
+	parent *BSNode
+	left   *BSNode
+	right  *BSNode
+	Value  int
+}
+
+// NewBSTree creates a new instance of a BSTree - a binary search tree. The
+// available set operations includes insert, delete, various search operations
+// as well as tree traversal operations. A binary search tree is defined by a
+// set nodes that satifies the binary-search-tree propery:
 //     Let n be a node in a binary search tree. If m is a node in the left
 //     subtree of n, then m.value <= n.value. If node m is in the right subtree
 //     of n, then m.value > n.value.
 // A node consists of a pointer to a parent node, along with two pointers to the
 // node left child and right child. Only the root node will have a nil parent
 // node, whereas any node can have either a nil left child or a nil right child.
-// Leaf nodes will have both. Finally, each node holds a intervalue value or
-// key.
+// Leaf nodes will have both. Finally, each node holds a integer value (or key).
 // Example of an instance of a binary search tree with 11 nodes:
 //
 //                      15
@@ -34,39 +51,22 @@
 // functions tend to be more readable and requires less lines on average, but
 // most iterative functions are slightly more efficient in terms of memory and
 // runtime.
-package tree
-
-// BSTree defines a tree structure with a root node and node count.
-type BSTree struct {
-	root  *Node
-	count int
-}
-
-// Node defines a node of the binary search tree.
-type Node struct {
-	parent *Node
-	left   *Node
-	right  *Node
-	value  int
-}
-
-// NewBSTree creates a new instance of a BSTree.
-func NewBSTree(par int) *BSTree {
+func NewBSTree() *BSTree {
 	return &BSTree{}
 }
 
 // Insert adds a node n to the correct position in the tree, by following the
 // binary-search-tree property. The tree is traversed down, until the parent of
-// n is found. A simple value comparison is between n's value and the parent is
+// n is found. A simple value comparison between n's value and the parent is
 // used to determine if n will be the left or right child of the parent.
 func (t *BSTree) Insert(val int) {
-	var m *Node
+	var m, n, r *BSNode
 
-	r := t.root
+	r = t.root
 	// traverse down the tree to find the correct parent
 	for r != nil {
 		m = r
-		if val < r.value {
+		if val < r.Value {
 			r = r.left
 		} else {
 			r = r.right
@@ -74,17 +74,17 @@ func (t *BSTree) Insert(val int) {
 	}
 
 	// create node n with m as parent
-	n := &Node{
+	n = &BSNode{
 		parent: m,
 		left:   nil,
 		right:  nil,
-		value:  val,
+		Value:  val,
 	}
 
 	if m == nil {
 		t.root = n
 	} else {
-		if n.value < m.value {
+		if n.Value < m.Value {
 			m.left = n
 		} else {
 			m.right = n
@@ -105,14 +105,16 @@ func (t *BSTree) Insert(val int) {
 // Case 3: If m is the right child of m, n is replaced by m.
 // Case 4: If m is not case 3, but instead lies within n's right subtree, m is
 // replaced by it own right child, then n is replaced by m.
-func (t *BSTree) Delete(n *Node) {
+func (t *BSTree) Delete(n *BSNode) {
 	if n == nil {
 		return
 	}
 
+	var m *BSNode
+
 	// case 1, n has no left child
 	if n.left == nil {
-		m := n.right
+		m = n.right
 		// replace n with n's right child
 		if n.parent == nil {
 			t.root = m
@@ -159,7 +161,7 @@ func (t *BSTree) Delete(n *Node) {
 	}
 
 	// n's successor will be the min node of the right subtree
-	m := t.Min(n.right)
+	m = t.Min(n.right)
 
 	// case 3, n's successor is (right) child of n
 	if m.parent != n {
@@ -211,25 +213,25 @@ func (t *BSTree) Delete(n *Node) {
 	t.count--
 }
 
-// Search begins its search from the given node n, and traverse downwards in the
-// tree. For each node it encounters, it compares the search value with n's
-// value. If they equal, the search terminates. If the search value is less
-// than, the search continues along n's left subtree.
+// Search begins its search from the given node n, and traverses downwards
+// through the tree. For each node it encounters, it compares the search value
+// with n's value. If they equal, the search terminates. If the search value is
+// less, the search continues along n's left subtree.
 // Symmetrically, if the search value is greater than n's value it continues
 // along n's right subtree. The binary-search-tree property ensures that this
 // is the correct, and that if the search value exists, it will be found.
 // Search is recursive and uses a helper function to maintain the recursive
 // callstack on either the left or right subtree.
-func (t *BSTree) Search(n *Node, val int) (*Node, bool) {
+func (t *BSTree) Search(n *BSNode, val int) (*BSNode, bool) {
 	if n == nil {
 		return nil, false
 	}
 
-	if val == n.value {
+	if val == n.Value {
 		return n, true
 	}
 
-	if val < n.value {
+	if val < n.Value {
 		return t.Search(n.left, val)
 	}
 
@@ -238,9 +240,9 @@ func (t *BSTree) Search(n *Node, val int) (*Node, bool) {
 
 // SearchIt is similar to Search, but uses an iterative approach, that utilizes
 // a for loop to traverse down the tree.
-func (t *BSTree) SearchIt(n *Node, val int) (*Node, bool) {
-	for n != nil && val != n.value {
-		if val < n.value {
+func (t *BSTree) SearchIt(n *BSNode, val int) (*BSNode, bool) {
+	for n != nil && val != n.Value {
+		if val < n.Value {
 			n = n.left
 		} else {
 			n = n.right
@@ -253,7 +255,7 @@ func (t *BSTree) SearchIt(n *Node, val int) (*Node, bool) {
 // Min finds the node with the minimum value of a given node n's subtree, i.e.
 // the leftmost node in the subtree. Min is recursive, and calls itself on the
 // left subtree.
-func (t *BSTree) Min(n *Node) *Node {
+func (t *BSTree) Min(n *BSNode) *BSNode {
 	if n == nil {
 		n = t.root
 	}
@@ -267,7 +269,7 @@ func (t *BSTree) Min(n *Node) *Node {
 
 // MinIt is similar to Min, but uses an iterative approach, that utilizes a for
 // loop to traverse the left subtree.
-func (t *BSTree) MinIt(n *Node) *Node {
+func (t *BSTree) MinIt(n *BSNode) *BSNode {
 	if n == nil {
 		n = t.root
 	}
@@ -282,7 +284,7 @@ func (t *BSTree) MinIt(n *Node) *Node {
 // Max finds the node with the maximum value of a given node n's subtree, i.e.
 // the rightmost node in the substree. Max is recursive, and calls itself on the
 // right subtree.
-func (t *BSTree) Max(n *Node) *Node {
+func (t *BSTree) Max(n *BSNode) *BSNode {
 	if n == nil {
 		n = t.root
 	}
@@ -296,7 +298,7 @@ func (t *BSTree) Max(n *Node) *Node {
 
 // MaxIt is similar to Max, but uses an iterative approach, that utilizes a for
 // loop to traverse the right subtree.
-func (t *BSTree) MaxIt(n *Node) *Node {
+func (t *BSTree) MaxIt(n *BSNode) *BSNode {
 	if n == nil {
 		n = t.root
 	}
@@ -311,10 +313,9 @@ func (t *BSTree) MaxIt(n *Node) *Node {
 // Successor finds the next node for a given node n. The function is split into
 // two cases. If the right subtree of node n is not empty, then the successor
 // of n is just the leftmost node in n's right substree.
-// If the right subtree of node n is empty, then either n does not have a
-// successor or the successor is the lowest ancestor of n whose left child is
-// also an ancestor of n.
-func (t *BSTree) Successor(n *Node) (*Node, bool) {
+// Otherwise, then either n does not have a successor or the successor is the
+// lowest ancestor of n whose left child is also an ancestor of n.
+func (t *BSTree) Successor(n *BSNode) (*BSNode, bool) {
 	if n == nil {
 		n = t.root
 	}
@@ -323,7 +324,7 @@ func (t *BSTree) Successor(n *Node) (*Node, bool) {
 		return t.Min(n.right), true
 	}
 
-	var m *Node
+	var m *BSNode
 	if n.parent != nil {
 		m = t.suc(n, n.parent)
 	}
@@ -334,7 +335,7 @@ func (t *BSTree) Successor(n *Node) (*Node, bool) {
 // suc is a helper function that traverses up the tree from a given node n, and
 // checks if n is the right child of its parent. When this is false, i.e. n is a
 // left child, the function returns n's parent.
-func (t *BSTree) suc(n, par *Node) *Node {
+func (t *BSTree) suc(n, par *BSNode) *BSNode {
 	if par.right != nil && n == par.right {
 		if par.parent != nil {
 			return t.suc(n.parent, par.parent)
@@ -348,7 +349,7 @@ func (t *BSTree) suc(n, par *Node) *Node {
 
 // SuccessorIt is similar to Successor, but uses an iterative approach that
 // utilizes a for loop to traverse up the tree.
-func (t *BSTree) SuccessorIt(n *Node) (*Node, bool) {
+func (t *BSTree) SuccessorIt(n *BSNode) (*BSNode, bool) {
 	if n == nil {
 		n = t.root
 	}
@@ -369,10 +370,9 @@ func (t *BSTree) SuccessorIt(n *Node) (*Node, bool) {
 // Predecessor finds the previous node for a given node n. The function is split
 // into two cases. If the left subtree of node n is not empty, then the
 // predecessor of n is just the rightmost node in n's left subtree.
-// If the left substree of node n is empty, then either n does not have a
-// predecessor or the predecessor is the lowest ancestor of n whose right child
-// is also an ancestor of n.
-func (t *BSTree) Predecessor(n *Node) (*Node, bool) {
+// Otherwise, then either n does not have a predecessor or the predecessor is
+// the lowest ancestor of n whose right child is also an ancestor of n.
+func (t *BSTree) Predecessor(n *BSNode) (*BSNode, bool) {
 	if n == nil {
 		n = t.root
 	}
@@ -381,7 +381,7 @@ func (t *BSTree) Predecessor(n *Node) (*Node, bool) {
 		return t.Max(n.left), true
 	}
 
-	var m *Node
+	var m *BSNode
 	if n.parent != nil {
 		m = t.pre(n, n.parent)
 	}
@@ -392,7 +392,7 @@ func (t *BSTree) Predecessor(n *Node) (*Node, bool) {
 // pre is a helper function that traverses up the tree from a given node n, and
 // checks if n is the left child of its parent. When this is false, i.e. n is a
 // right child, the function returns n's parent.
-func (t *BSTree) pre(m, par *Node) *Node {
+func (t *BSTree) pre(m, par *BSNode) *BSNode {
 	if par.left != nil && m == par.left {
 		if par.parent != nil {
 			return t.pre(m.parent, par.parent)
@@ -406,7 +406,7 @@ func (t *BSTree) pre(m, par *Node) *Node {
 
 // PredecessorIt is similar to Predecessor, but uses an iterative approach
 // that utilizes a for loop to traverse up the tree.
-func (t *BSTree) PredecessorIt(n *Node) (*Node, bool) {
+func (t *BSTree) PredecessorIt(n *BSNode) (*BSNode, bool) {
 	if n == nil {
 		n = t.root
 	}
@@ -428,7 +428,7 @@ func (t *BSTree) PredecessorIt(n *Node) (*Node, bool) {
 // results in an ascending ordered list of the values. InOrder is recursive, and
 // calls itself on the left and right subtree, but calling the a function given
 // as input between each of them.
-func (t *BSTree) InOrder(n *Node, f func(*Node)) {
+func (t *BSTree) InOrder(n *BSNode, f func(*BSNode)) {
 	if n == nil {
 		n = t.root
 	}
@@ -446,9 +446,9 @@ func (t *BSTree) InOrder(n *Node, f func(*Node)) {
 
 // InOrderIt is similar to InOrder, but uses an interative approach that
 // utilizes for loops and a stack to hold nodes.
-func (t *BSTree) InOrderIt(f func(*Node)) {
+func (t *BSTree) InOrderIt(f func(*BSNode)) {
 	n := t.root
-	ns := make([]*Node, t.Size())
+	ns := make([]*BSNode, t.Size())
 	top := 0
 
 	for n != nil {
@@ -487,7 +487,7 @@ func (t *BSTree) InOrderIt(f func(*Node)) {
 // PreOrder prints a preordered list of the values of node n's subtree. PreOrder
 // is recursive, and calls itself on the left and right subtree, after calling
 // a function given as  input.
-func (t *BSTree) PreOrder(n *Node, f func(*Node)) {
+func (t *BSTree) PreOrder(n *BSNode, f func(*BSNode)) {
 	if n == nil {
 		n = t.root
 	}
@@ -505,9 +505,9 @@ func (t *BSTree) PreOrder(n *Node, f func(*Node)) {
 
 // PreOrderIt is similar to PreOrder, but uses an interative approach that
 // utilizes for loops and a stack to hold nodes.
-func (t *BSTree) PreOrderIt(f func(*Node)) {
+func (t *BSTree) PreOrderIt(f func(*BSNode)) {
 	n := t.root
-	ns := make([]*Node, t.Size())
+	ns := make([]*BSNode, t.Size())
 	top := 0
 	ns[top] = n
 	top++
@@ -533,7 +533,7 @@ func (t *BSTree) PreOrderIt(f func(*Node)) {
 // PostOrder prints a postordered list of the values of node n's subtree.
 // PostOrder is recursive, and calls itself on the left and right subtree,
 // before calling a function given as input.
-func (t *BSTree) PostOrder(n *Node, f func(*Node)) {
+func (t *BSTree) PostOrder(n *BSNode, f func(*BSNode)) {
 	if n == nil {
 		n = t.root
 	}
@@ -551,9 +551,9 @@ func (t *BSTree) PostOrder(n *Node, f func(*Node)) {
 
 // PostOrderIt is similar to PostOrder, but uses an interative approach that
 // utilizes for loops and a stack to hold nodes.
-func (t *BSTree) PostOrderIt(f func(*Node)) {
+func (t *BSTree) PostOrderIt(f func(*BSNode)) {
 	n := t.root
-	ns := make([]*Node, t.Size())
+	ns := make([]*BSNode, t.Size())
 	top := 0
 	flag := true
 
@@ -573,7 +573,7 @@ func (t *BSTree) PostOrderIt(f func(*Node)) {
 		n = ns[top]
 
 		if top > 0 {
-			if n.right != nil && ns[top-1].value == n.right.value {
+			if n.right != nil && ns[top-1].Value == n.right.Value {
 				top--
 				ns[top] = n
 				top++
@@ -591,7 +591,32 @@ func (t *BSTree) PostOrderIt(f func(*Node)) {
 	}
 }
 
+// Root returns the root of the tree.
+func (t *BSTree) Root() *BSNode {
+	return t.root
+}
+
 // Size returns the total number of the nodes in the tree.
 func (t *BSTree) Size() int {
 	return t.count
+}
+
+// Print displays a visual 2d representation of the tree.
+func (t *BSTree) Print(n *BSNode, level int) {
+	if n == nil {
+		return
+	}
+
+	t.Print(n.right, level+1)
+
+	if level != 0 {
+		for i := 0; i < level-1; i++ {
+			fmt.Print("|    ")
+		}
+		fmt.Printf("|----%d\n", n.Value)
+	} else {
+		fmt.Printf("%d\n", n.Value)
+	}
+
+	t.Print(n.left, level+1)
 }
