@@ -1,14 +1,13 @@
 package elementary
 
-// NewDSQueue creates a new instance of a queue structure based on two stacks
-// called stack0 and stack1. Like Queue, DSQueue implements a LIFO policy, with
-// the basic operations peek, enqueue and dequeue. DSQueue contains two stacks
-// called S0 and s1. s0 will be used as the main stack, while s1 will be used to
-// queue elements until s0 is empty. Elements may therefore, be popped from s0
-// and pushed to s1 within the same operation. The LIFO policy will always be
-// maintained. The enqueue operation is done in O(1) time, while both peek and
-// dequeue are done in O(n), so there is no avantage in using DSQueue compared
-// to using Queue.
+// NewDSQueue creates a new instance of a queue structure based on two stacks.
+// Like Queue, DSQueue implements a LIFO policy, with the basic operations peek,
+// enqueue and dequeue. DSQueue contains two stacks called S0 and s1. s0 will be
+// used as the main stack, while s1 will be used to queue elements until s0 is
+// empty. Elements may therefore, be popped from s0 and pushed to s1 within the
+// same operation. The LIFO policy will always be maintained. The enqueue
+// operation is done in O(1) time, while both peek and dequeue are done in O(n),
+// so there is no avantage in using DSQueue compared to using Queue.
 func NewDSQueue() *DSQueue {
 	s0 := NewStack()
 	s1 := NewStack()
