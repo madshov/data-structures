@@ -1,6 +1,8 @@
 package tree
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // BSTree defines a tree structure with a root node and node count.
 type BSTree struct {
@@ -256,11 +258,7 @@ func (t *BSTree) SearchIt(n *BSNode, val int) (*BSNode, bool) {
 // the leftmost node in the subtree. Min is recursive, and calls itself on the
 // left subtree.
 func (t *BSTree) Min(n *BSNode) *BSNode {
-	if n == nil {
-		n = t.root
-	}
-
-	if n.left != nil {
+	if n != nil && n.left != nil {
 		return t.Min(n.left)
 	}
 
@@ -270,11 +268,7 @@ func (t *BSTree) Min(n *BSNode) *BSNode {
 // MinIt is similar to Min, but uses an iterative approach, that utilizes a for
 // loop to traverse the left subtree.
 func (t *BSTree) MinIt(n *BSNode) *BSNode {
-	if n == nil {
-		n = t.root
-	}
-
-	for n.left != nil {
+	for n != nil && n.left != nil {
 		n = n.left
 	}
 
@@ -285,11 +279,7 @@ func (t *BSTree) MinIt(n *BSNode) *BSNode {
 // the rightmost node in the substree. Max is recursive, and calls itself on the
 // right subtree.
 func (t *BSTree) Max(n *BSNode) *BSNode {
-	if n == nil {
-		n = t.root
-	}
-
-	if n.right != nil {
+	if n != nil && n.right != nil {
 		return t.Max(n.right)
 	}
 
@@ -299,11 +289,7 @@ func (t *BSTree) Max(n *BSNode) *BSNode {
 // MaxIt is similar to Max, but uses an iterative approach, that utilizes a for
 // loop to traverse the right subtree.
 func (t *BSTree) MaxIt(n *BSNode) *BSNode {
-	if n == nil {
-		n = t.root
-	}
-
-	for n.right != nil {
+	for n != nil && n.right != nil {
 		n = n.right
 	}
 
@@ -317,7 +303,7 @@ func (t *BSTree) MaxIt(n *BSNode) *BSNode {
 // lowest ancestor of n whose left child is also an ancestor of n.
 func (t *BSTree) Successor(n *BSNode) (*BSNode, bool) {
 	if n == nil {
-		n = t.root
+		return nil, false
 	}
 
 	if n.right != nil {
@@ -351,7 +337,7 @@ func (t *BSTree) suc(n, par *BSNode) *BSNode {
 // utilizes a for loop to traverse up the tree.
 func (t *BSTree) SuccessorIt(n *BSNode) (*BSNode, bool) {
 	if n == nil {
-		n = t.root
+		return nil, false
 	}
 
 	if n.right != nil {
@@ -374,7 +360,7 @@ func (t *BSTree) SuccessorIt(n *BSNode) (*BSNode, bool) {
 // the lowest ancestor of n whose right child is also an ancestor of n.
 func (t *BSTree) Predecessor(n *BSNode) (*BSNode, bool) {
 	if n == nil {
-		n = t.root
+		return nil, false
 	}
 
 	if n.left != nil {
@@ -408,7 +394,7 @@ func (t *BSTree) pre(m, par *BSNode) *BSNode {
 // that utilizes a for loop to traverse up the tree.
 func (t *BSTree) PredecessorIt(n *BSNode) (*BSNode, bool) {
 	if n == nil {
-		n = t.root
+		return nil, false
 	}
 
 	if n.left != nil {
@@ -430,7 +416,7 @@ func (t *BSTree) PredecessorIt(n *BSNode) (*BSNode, bool) {
 // as input between each of them.
 func (t *BSTree) InOrder(n *BSNode, f func(*BSNode)) {
 	if n == nil {
-		n = t.root
+		return
 	}
 
 	if n.left != nil {
@@ -489,7 +475,7 @@ func (t *BSTree) InOrderIt(f func(*BSNode)) {
 // a function given as  input.
 func (t *BSTree) PreOrder(n *BSNode, f func(*BSNode)) {
 	if n == nil {
-		n = t.root
+		return
 	}
 
 	f(n)
@@ -535,7 +521,7 @@ func (t *BSTree) PreOrderIt(f func(*BSNode)) {
 // before calling a function given as input.
 func (t *BSTree) PostOrder(n *BSNode, f func(*BSNode)) {
 	if n == nil {
-		n = t.root
+		return
 	}
 
 	if n.left != nil {
@@ -619,4 +605,116 @@ func (t *BSTree) Print(n *BSNode, level int) {
 	}
 
 	t.Print(n.left, level+1)
+}
+
+// GetHeight returns the maxumum height, i.e. the number of edges on the longest
+// path of the binay tree. The root node has height 0.
+func (t *BSTree) GetHeight(n *BSNode) int {
+	if n == nil {
+		return 0
+	}
+
+	leftHeight, rightHeight := 0, 0
+
+	if n.left != nil {
+		leftHeight = 1 + t.GetHeight(n.left)
+	}
+
+	if n.right != nil {
+		rightHeight = 1 + t.GetHeight(n.right)
+	}
+
+	if leftHeight > rightHeight {
+		return leftHeight
+	}
+
+	return rightHeight
+}
+
+// LeftNodeCount returns the number of left nodes in the binary tree.
+func (t *BSTree) LeftNodeCount(n *BSNode) int {
+	if n == nil {
+		return 0
+	}
+
+	count := 0
+	if n.left != nil {
+		count += 1 + t.LeftNodeCount(n.left)
+	}
+
+	if n.right != nil {
+		count += t.LeftNodeCount(n.right)
+	}
+
+	return count
+}
+
+// RightNodeCount returns the number of right nodes in the binary tree.
+func (t *BSTree) RightNodeCount(n *BSNode) int {
+	if n == nil {
+		return 0
+	}
+
+	count := 0
+	if n.right != nil {
+		count += 1 + t.RightNodeCount(n.right)
+	}
+
+	if n.left != nil {
+		count += t.RightNodeCount(n.left)
+	}
+
+	return count
+}
+
+// FullNodeCount returns the number of full node, i.e. nodes with two children,
+// in the binary tree.
+func (t *BSTree) FullNodeCount(n *BSNode) int {
+	if n == nil {
+		return 0
+	}
+
+	count := 0
+	if n.left != nil && n.right != nil {
+		count++
+	}
+
+	count += t.FullNodeCount(n.left) + t.FullNodeCount(n.right)
+
+	return count
+}
+
+// HalfNodeCount returns the number of half nodes, i.e. nodes with one child, in
+// the binary tree.
+func (t *BSTree) HalfNodeCount(n *BSNode) int {
+	if n == nil {
+		return 0
+	}
+
+	count := 0
+	if (n.left == nil && n.right != nil) ||
+		(n.left != nil && n.right == nil) {
+		count++
+	}
+
+	count += t.HalfNodeCount(n.left) + t.HalfNodeCount(n.right)
+
+	return count
+}
+
+// NonLeafCount returns the number of non-leaf nodes, i.e. nodes with at least
+// one child, in the binary tree.
+func (t *BSTree) NonLeafCount(n *BSNode) int {
+	if n == nil {
+		return 0
+	}
+
+	count := 0
+	if n.left != nil || n.right != nil {
+		count++
+	}
+
+	count += t.NonLeafCount(n.left) + t.NonLeafCount(n.right)
+
+	return count
 }
