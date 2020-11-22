@@ -617,12 +617,15 @@ func (t *BSTree) GetHeight(n *BSNode) int {
 	leftHeight, rightHeight := 0, 0
 
 	if n.left != nil {
-		leftHeight = 1 + t.GetHeight(n.left)
+		leftHeight++
 	}
 
 	if n.right != nil {
-		rightHeight = 1 + t.GetHeight(n.right)
+		rightHeight++
 	}
+
+	leftHeight += t.GetHeight(n.left)
+	rightHeight += t.GetHeight(n.right)
 
 	if leftHeight > rightHeight {
 		return leftHeight
@@ -639,13 +642,10 @@ func (t *BSTree) LeftNodeCount(n *BSNode) int {
 
 	count := 0
 	if n.left != nil {
-		count += 1 + t.LeftNodeCount(n.left)
+		count++
 	}
 
-	if n.right != nil {
-		count += t.LeftNodeCount(n.right)
-	}
-
+	count += t.LeftNodeCount(n.left) + t.LeftNodeCount(n.right)
 	return count
 }
 
@@ -657,13 +657,10 @@ func (t *BSTree) RightNodeCount(n *BSNode) int {
 
 	count := 0
 	if n.right != nil {
-		count += 1 + t.RightNodeCount(n.right)
+		count++
 	}
 
-	if n.left != nil {
-		count += t.RightNodeCount(n.left)
-	}
-
+	count += t.RightNodeCount(n.right) + t.RightNodeCount(n.left)
 	return count
 }
 
@@ -680,7 +677,6 @@ func (t *BSTree) FullNodeCount(n *BSNode) int {
 	}
 
 	count += t.FullNodeCount(n.left) + t.FullNodeCount(n.right)
-
 	return count
 }
 
@@ -698,7 +694,6 @@ func (t *BSTree) HalfNodeCount(n *BSNode) int {
 	}
 
 	count += t.HalfNodeCount(n.left) + t.HalfNodeCount(n.right)
-
 	return count
 }
 
@@ -715,6 +710,5 @@ func (t *BSTree) NonLeafCount(n *BSNode) int {
 	}
 
 	count += t.NonLeafCount(n.left) + t.NonLeafCount(n.right)
-
 	return count
 }
