@@ -52,9 +52,9 @@ func (q *Queue) Enqueue(val int) {
 
 	if q.tail != nil {
 		q.tail.next = &e
-	} else {
-		q.tail = &e
 	}
+
+	q.tail = &e
 
 	if q.head == nil {
 		q.head = &e
