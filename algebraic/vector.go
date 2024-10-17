@@ -145,6 +145,7 @@ func (v *Vector) Div(w *Vector) (*Vector, error) {
 		if w.coords[k] == 0 {
 			return nil, ErrIndivisbleByZero
 		}
+
 		rv.coords[k] = c / w.coords[k]
 	}
 
@@ -172,6 +173,23 @@ func (v *Vector) Scale(scalar float64) *Vector {
 	}
 
 	return rv
+}
+
+// Descale descales each coordinate in the vector with a given scalar value.
+func (v *Vector) Descale(scalar float64) (*Vector, error) {
+	rv := &Vector{
+		coords: make([]float64, v.Dimension()),
+	}
+
+	if scalar == 0 {
+		return nil, ErrIndivisbleByZero
+	}
+
+	for k, c := range v.coords {
+		rv.coords[k] = c / scalar
+	}
+
+	return rv, nil
 }
 
 // GetCoord returns a given coordinate for the vector.
