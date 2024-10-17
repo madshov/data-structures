@@ -28,7 +28,7 @@ func NewMatrix(cols int, coords ...float64) (*Matrix, error) {
 
 	var (
 		i, j int
-		vs   []*Vector
+		vs   []*vector
 	)
 
 	// loop through coords in chunks of cols
@@ -61,7 +61,7 @@ func NewIdentityMatrix(rows, cols int) (*Matrix, error) {
 
 	var (
 		i  int
-		vs []*Vector
+		vs []*vector
 	)
 
 	for i < rows {
@@ -83,18 +83,19 @@ func NewIdentityMatrix(rows, cols int) (*Matrix, error) {
 // Matrix defines a matrix structure as a slice of vectors and a row and column
 // count.
 type Matrix struct {
-	coords     []*Vector
+	coords     []*vector
 	rows, cols int
 }
 
 // Transpose creates and returns a new matrix with rows and columns transposed.
 // |1.0  2.0  3.0|          |1.0  4.0|
 // |4.0  5.0  6.0|    =>    |2.0  5.0|
-//                          |3.0  6.0|
+//
+//	|3.0  6.0|
 func (m *Matrix) Transpose() *Matrix {
 	var (
 		coords []float64
-		vs     []*Vector
+		vs     []*vector
 		rows   = m.cols
 		cols   = m.rows
 	)
