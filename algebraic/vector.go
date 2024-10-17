@@ -15,7 +15,7 @@ var (
 )
 
 // Vector defines a vector structure with a slice of floating point coordinates.
-type vector struct {
+type Vector struct {
 	coords []float64
 }
 
@@ -24,7 +24,7 @@ type vector struct {
 // greater than the number of coordinates, the remaining indexes of the vector
 // will be zero-filled. If the dimension is less, the remaining coordinates will
 // be ignored.
-func NewVector(dim int, coords ...float64) (*vector, error) {
+func NewVector(dim int, coords ...float64) (*Vector, error) {
 	if dim < 0 {
 		return nil, ErrInvalidDim
 	}
@@ -34,20 +34,20 @@ func NewVector(dim int, coords ...float64) (*vector, error) {
 		cs[i] = coords[i]
 	}
 
-	return &vector{
+	return &Vector{
 		coords: cs,
 	}, nil
 }
 
 // NewZeroVector creates a new instance of a zero-filled vector with a given
 // dimension.
-func NewZeroVector(dim int) (*vector, error) {
+func NewZeroVector(dim int) (*Vector, error) {
 	return NewVector(dim)
 }
 
 // NewUnitVector creates a new instance of a unit vector with a given
 // dimension.
-func NewUnitVector(dim, coord int) (*vector, error) {
+func NewUnitVector(dim, coord int) (*Vector, error) {
 	vec, err := NewVector(dim)
 	if err != nil {
 		return nil, err
@@ -62,13 +62,13 @@ func NewUnitVector(dim, coord int) (*vector, error) {
 }
 
 // Dimension returns the number of coordinates for the vector.
-func (v *vector) Dimension() int {
+func (v *Vector) Dimension() int {
 	return len(v.coords)
 }
 
 // Magnitude returns the distance from the endpoint to the origin for the
 // vector.
-func (v *vector) Magnitude() float64 {
+func (v *Vector) Magnitude() float64 {
 	var l float64
 	for _, c := range v.coords {
 		l += c * c
@@ -83,7 +83,7 @@ func (v *vector) Magnitude() float64 {
 
 // Normalize normalizes, i.e. divides each coodinate with its magnitude, a for
 // the vector.
-func (v *vector) Normalize() error {
+func (v *Vector) Normalize() error {
 	mag := v.Magnitude()
 	if mag == 0 {
 		return ErrMagZero
@@ -97,8 +97,8 @@ func (v *vector) Normalize() error {
 }
 
 // Add adds each coordinate of two vectors.
-func (v *vector) Add(w *vector) *vector {
-	rv := &vector{
+func (v *Vector) Add(w *Vector) *Vector {
+	rv := &Vector{
 		coords: make([]float64, v.Dimension()),
 	}
 
@@ -110,8 +110,8 @@ func (v *vector) Add(w *vector) *vector {
 }
 
 // Sub substracts each coordinate of two vectors.
-func (v *vector) Sub(w *vector) *vector {
-	rv := &vector{
+func (v *Vector) Sub(w *Vector) *Vector {
+	rv := &Vector{
 		coords: make([]float64, v.Dimension()),
 	}
 
@@ -123,8 +123,8 @@ func (v *vector) Sub(w *vector) *vector {
 }
 
 // Mul multiplies each coordinate of two vectors.
-func (v *vector) Mul(w *vector) *vector {
-	rv := &vector{
+func (v *Vector) Mul(w *Vector) *Vector {
+	rv := &Vector{
 		coords: make([]float64, v.Dimension()),
 	}
 
@@ -136,8 +136,8 @@ func (v *vector) Mul(w *vector) *vector {
 }
 
 // Div divides each coordinate of two vectors.
-func (v *vector) Div(w *vector) (*vector, error) {
-	rv := &vector{
+func (v *Vector) Div(w *Vector) (*Vector, error) {
+	rv := &Vector{
 		coords: make([]float64, v.Dimension()),
 	}
 
@@ -152,7 +152,7 @@ func (v *vector) Div(w *vector) (*vector, error) {
 }
 
 // Dot returns the dot product (scalar product) of two vectors.
-func (v *vector) Dot(w *vector) float64 {
+func (v *Vector) Dot(w *Vector) float64 {
 	var d float64
 	for k, c := range v.coords {
 		d += c * w.coords[k]
@@ -162,8 +162,8 @@ func (v *vector) Dot(w *vector) float64 {
 }
 
 // Scale scales each coordinate in the vector with a given scalar value.
-func (v *vector) Scale(scalar float64) *vector {
-	rv := &vector{
+func (v *Vector) Scale(scalar float64) *Vector {
+	rv := &Vector{
 		coords: make([]float64, v.Dimension()),
 	}
 
@@ -175,6 +175,6 @@ func (v *vector) Scale(scalar float64) *vector {
 }
 
 // GetCoord returns a given coordinate for the vector.
-func (v *vector) GetCoord(coord int) float64 {
+func (v *Vector) GetCoord(coord int) float64 {
 	return v.coords[coord]
 }
