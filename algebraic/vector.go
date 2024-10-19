@@ -21,7 +21,7 @@ type Vector struct {
 
 // NewVector creates a new instance of a Vector with a given dimension and a
 // slice of coordinates, and returns a pointer to it. If the dimension is
-// greater than the number of coordinates, the remaining indexes of the vector
+// greater than the number of coordinates, the remaining indices of the vector
 // will be zero-filled. If the dimension is less, the remaining coordinates will
 // be ignored.
 func NewVector(dim int, coords ...float64) (*Vector, error) {
@@ -51,7 +51,7 @@ func NewUnitVector(dim, coord int) (*Vector, error) {
 		return nil, err
 	}
 
-	if len(vec.coords) < coord {
+	if len(vec.coords) <= coord {
 		return nil, ErrCoordOutOfBounds
 	}
 
@@ -79,7 +79,7 @@ func (v *Vector) Magnitude() float64 {
 	return math.Sqrt(l)
 }
 
-// Normalize normalizes, i.e. divides each coodinate with its magnitude, a for
+// Normalize normalizes, i.e. divides each coodinate with its magnitude for
 // the vector.
 func (v *Vector) Normalize() error {
 	mag := v.Magnitude()
@@ -94,7 +94,7 @@ func (v *Vector) Normalize() error {
 	return nil
 }
 
-// Add adds each coordinate of two vectors.
+// Add adds two vectors and returns the resulting vector.
 func (v *Vector) Add(w *Vector) *Vector {
 	vec := &Vector{
 		coords: make([]float64, v.Dimension()),
@@ -107,7 +107,7 @@ func (v *Vector) Add(w *Vector) *Vector {
 	return vec
 }
 
-// Sub substracts each coordinate of two vectors.
+// Sub subtracts two vectors and returns the resulting vector.
 func (v *Vector) Sub(w *Vector) *Vector {
 	vec := &Vector{
 		coords: make([]float64, v.Dimension()),
@@ -120,7 +120,7 @@ func (v *Vector) Sub(w *Vector) *Vector {
 	return vec
 }
 
-// Mul multiplies each coordinate of two vectors.
+// Mul multiplies two vectors and returns the resulting vector.
 func (v *Vector) Mul(w *Vector) *Vector {
 	vec := &Vector{
 		coords: make([]float64, v.Dimension()),
@@ -133,7 +133,7 @@ func (v *Vector) Mul(w *Vector) *Vector {
 	return vec
 }
 
-// Div divides each coordinate of two vectors.
+// Dic divides two vectors and returns the resulting vector.
 func (v *Vector) Div(w *Vector) (*Vector, error) {
 	vec := &Vector{
 		coords: make([]float64, v.Dimension()),
@@ -193,4 +193,16 @@ func (v *Vector) Descale(scalar float64) (*Vector, error) {
 // GetCoord returns a given coordinate for the vector.
 func (v *Vector) GetCoord(coord int) float64 {
 	return v.coords[coord]
+}
+
+func (v *Vector) X() float64 {
+	return v.coords[0]
+}
+
+func (v *Vector) Y() float64 {
+	return v.coords[1]
+}
+
+func (v *Vector) Z() float64 {
+	return v.coords[2]
 }
