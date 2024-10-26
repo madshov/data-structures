@@ -173,36 +173,22 @@ func (v *Vector) Scale(scalar float64) *Vector {
 	return vec
 }
 
-// Descale descales each coordinate in the vector with a given scalar value.
-func (v *Vector) Descale(scalar float64) (*Vector, error) {
-	vec := &Vector{
-		coords: make([]float64, v.Dimension()),
-	}
-
-	if scalar == 0 {
-		return nil, ErrIndivisbleByZero
-	}
-
-	for k, c := range v.coords {
-		vec.coords[k] = c / scalar
-	}
-
-	return vec, nil
-}
-
 // GetCoord returns a given coordinate for the vector.
 func (v *Vector) GetCoord(coord int) float64 {
 	return v.coords[coord]
 }
 
+// X returns the first coordinate of the vector. Shorthand for v.coords[0].
 func (v *Vector) X() float64 {
 	return v.coords[0]
 }
 
+// Y returns the second coordinate of the vector. Shorthand for v.coords[1].
 func (v *Vector) Y() float64 {
 	return v.coords[1]
 }
 
+// Z returns the third coordinate of the vector. Shorthand for v.coords[2].
 func (v *Vector) Z() float64 {
 	return v.coords[2]
 }
