@@ -28,7 +28,7 @@ func NewMatrix(cols int, coords ...float64) (*Matrix, error) {
 
 	var (
 		i, j int
-		vs   []*Vector
+		vs   []Vector
 	)
 
 	// loop through coords in chunks of cols
@@ -61,7 +61,7 @@ func NewIdentityMatrix(rows, cols int) (*Matrix, error) {
 
 	var (
 		i  int
-		vs []*Vector
+		vs []Vector
 	)
 
 	for i < rows {
@@ -83,7 +83,7 @@ func NewIdentityMatrix(rows, cols int) (*Matrix, error) {
 // Matrix defines a matrix structure as a slice of vectors and a row and column
 // count.
 type Matrix struct {
-	coords     []*Vector
+	coords     []Vector
 	rows, cols int
 }
 
@@ -95,7 +95,7 @@ type Matrix struct {
 func (m *Matrix) Transpose() *Matrix {
 	var (
 		coords []float64
-		vs     []*Vector
+		vs     []Vector
 		rows   = m.cols
 		cols   = m.rows
 	)
@@ -104,7 +104,7 @@ func (m *Matrix) Transpose() *Matrix {
 	for i < rows {
 		var j int
 		for j < cols {
-			coords = append(coords, m.coords[j].coords[i])
+			coords = append(coords, m.coords[j][i])
 			j++
 		}
 		i++
@@ -135,7 +135,7 @@ func (m *Matrix) Transpose() *Matrix {
 
 func (m *Matrix) Print() {
 	for _, r := range m.coords {
-		for _, c := range r.coords {
+		for _, c := range r {
 			fmt.Printf("%f ", c)
 		}
 		fmt.Println()
