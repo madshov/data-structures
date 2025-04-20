@@ -8,9 +8,7 @@ import (
 // Various errors a vector function can return.
 var (
 	ErrInvalidDim       = errors.New("vector dimension cannot be negative")
-	ErrCoordOutOfBounds = errors.New("vector coordinate is greater than dimension")
 	ErrMagZero          = errors.New("vector magnitude cannot be zero")
-	ErrDimsNotEqual     = errors.New("vector dimensions do not match")
 	ErrIndivisbleByZero = errors.New("vector coordinate is not divisble by zero")
 )
 
@@ -22,41 +20,34 @@ type Vector []float64
 // greater than the number of coordinates, the remaining indices of the vector
 // will be zero-filled. If the dimension is less, the remaining coordinates will
 // be ignored.
-func NewVector(dim int, coords ...float64) (Vector, error) {
-	if dim < 0 {
-		return nil, ErrInvalidDim
-	}
-
+func NewVector(dim uint, coords ...float64) Vector {
 	cs := make([]float64, dim)
 	copy(cs, coords)
-	return Vector(cs), nil
-}
-
-// NewZeroVector creates a new instance of a zero-filled vector with a given
-// dimension.
-func NewZeroVector(dim int) (Vector, error) {
-	return NewVector(dim)
+	return Vector(cs)
 }
 
 // NewUnitVector creates a new instance of a unit vector with a given
 // dimension.
-func NewUnitVector(dim, coord int) (Vector, error) {
-	v, err := NewVector(dim)
-	if err != nil {
-		return nil, err
+func NewUnitVector(dim uint, el uint) Vector {
+	cs := make([]float64, dim)
+	if dim <= el {
+		return Vector(cs)
 	}
 
-	if len(v) <= coord {
-		return nil, ErrCoordOutOfBounds
-	}
+	cs[el] = 1
+	return Vector(cs)
+}
 
-	v[coord] = 1
-	return v, nil
+// NewZeroVector creates a new instance of a zero-filled vector with a given
+// dimension.
+func NewZeroVector(dim uint) Vector {
+	cs := make([]float64, dim)
+	return Vector(cs)
 }
 
 // Dimension returns the number of coordinates for the vector.
-func (v Vector) Dimension() int {
-	return len(v)
+func (v Vector) Dimension() uint {
+	return uint(len(v))
 }
 
 // Magnitude returns the distance from the endpoint to the origin for the
@@ -90,54 +81,38 @@ func (v Vector) Normalize() error {
 }
 
 // Add adds two vectors and returns the resulting vector.
-func (v Vector) Add(w Vector) (Vector, error) {
-	vec, err := NewZeroVector(v.Dimension())
-	if err != nil {
-		return nil, err
-	}
-
+func (v Vector) Add(w Vector) Vector {
+	vec := NewZeroVector(v.Dimension())
 	for k, c := range v {
 		vec[k] = c + w[k]
 	}
 
-	return vec, nil
+	return vec
 }
 
 // Sub subtracts two vectors and returns the resulting vector.
-func (v Vector) Sub(w Vector) (Vector, error) {
-	vec, err := NewZeroVector(v.Dimension())
-	if err != nil {
-		return nil, err
-	}
-
+func (v Vector) Sub(w Vector) Vector {
+	vec := NewZeroVector(v.Dimension())
 	for k, c := range v {
 		vec[k] = c - w[k]
 	}
 
-	return vec, nil
+	return vec
 }
 
 // Mul multiplies two vectors and returns the resulting vector.
-func (v Vector) Mul(w Vector) (Vector, error) {
-	vec, err := NewZeroVector(v.Dimension())
-	if err != nil {
-		return nil, err
-	}
-
+func (v Vector) Mul(w Vector) Vector {
+	vec := NewZeroVector(v.Dimension())
 	for k, c := range v {
 		vec[k] = c * w[k]
 	}
 
-	return vec, nil
+	return vec
 }
 
 // Dic divides two vectors and returns the resulting vector.
 func (v Vector) Div(w Vector) (Vector, error) {
-	vec, err := NewZeroVector(v.Dimension())
-	if err != nil {
-		return nil, err
-	}
-
+	vec := NewZeroVector(v.Dimension())
 	for k, c := range v {
 		if w[k] == 0 {
 			return nil, ErrIndivisbleByZero
@@ -160,39 +135,38 @@ func (v Vector) Dot(w Vector) float64 {
 }
 
 // Scale scales each coordinate in the vector with a given scalar value.
-func (v Vector) Scale(scalar float64) (Vector, error) {
-	vec, err := NewZeroVector(v.Dimension())
-	if err != nil {
-		return nil, err
-	}
-
+func (v Vector) Scale(scalar float64) Vector {
+	vec := NewZeroVector(v.Dimension())
 	for k, c := range v {
 		vec[k] = c * scalar
 	}
 
-	return vec, nil
+	return vec
 }
 
 // GetCoord returns a given coordinate for the vector.
-func (v Vector) GetCoord(coord int) float64 {
+func (v Vector) GetCoord(coord uint) (float64, error) {
 	if v.Dimension() < coord+1 {
-		return 0
+		return 0, ErrInvalidDim
 	}
 
-	return v[coord]
+	return v[coord], nil
 }
 
 // X returns the first coordinate of the vector. Shorthand for v.coords[0].
 func (v Vector) X() float64 {
-	return v.GetCoord(0)
+	c, _ := v.GetCoord(0)
+	return c
 }
 
 // Y returns the second coordinate of the vector. Shorthand for v.coords[1].
 func (v Vector) Y() float64 {
-	return v.GetCoord(1)
+	c, _ := v.GetCoord(1)
+	return c
 }
 
 // Z returns the third coordinate of the vector. Shorthand for v.coords[2].
 func (v Vector) Z() float64 {
-	return v.GetCoord(2)
+	c, _ := v.GetCoord(2)
+	return c
 }

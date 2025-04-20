@@ -17,58 +17,52 @@ var (
 // fill up each row of the matrix as long as there are more coordinates. If
 // there is not enough coordinates to fill the last row, the remaining will be
 // zero-filled.
-func NewMatrix(cols int, coords ...float64) (*Matrix, error) {
-	if cols < 0 {
-		return nil, ErrInvalidCols
-	}
+func NewMatrix(cols uint, coords ...float64) (*Matrix, error) {
+	var (
+		dim = uint(len(coords))
+	)
 
-	if cols > len(coords) {
+	if cols > dim {
 		return nil, ErrColsOutOfBounds
 	}
 
 	var (
-		i, j int
+		i, j uint
 		vs   []Vector
 	)
 
 	// loop through coords in chunks of cols
-	for i < len(coords) {
+	for i < dim {
 		j = i + cols
 		// cap upper bound if it becomes too big
-		if j > len(coords) {
-			j = len(coords)
+		if j > dim {
+			j = dim
 		}
 
-		v, err := NewVector(cols, coords[i:j]...)
-		if err != nil {
-			return nil, err
-		}
+		v := NewVector(cols, coords[i:j]...)
 		vs = append(vs, v)
 		i += cols
 	}
 
 	return &Matrix{
 		coords: vs,
-		rows:   len(vs),
+		rows:   uint(len(vs)),
 		cols:   cols,
 	}, nil
 }
 
-func NewIdentityMatrix(rows, cols int) (*Matrix, error) {
+func NewIdentityMatrix(rows, cols uint) (*Matrix, error) {
 	if rows != cols {
 		return nil, ErrNotSquare
 	}
 
 	var (
-		i  int
+		i  uint
 		vs []Vector
 	)
 
 	for i < rows {
-		v, err := NewUnitVector(cols, i)
-		if err != nil {
-			return nil, err
-		}
+		v := NewUnitVector(cols, i)
 		vs = append(vs, v)
 		i++
 	}
@@ -84,7 +78,7 @@ func NewIdentityMatrix(rows, cols int) (*Matrix, error) {
 // count.
 type Matrix struct {
 	coords     []Vector
-	rows, cols int
+	rows, cols uint
 }
 
 // Transpose creates and returns a new matrix with rows and columns transposed.
@@ -100,9 +94,9 @@ func (m *Matrix) Transpose() *Matrix {
 		cols   = m.rows
 	)
 
-	var i int
+	var i uint
 	for i < rows {
-		var j int
+		var j uint
 		for j < cols {
 			coords = append(coords, m.coords[j][i])
 			j++
@@ -110,9 +104,9 @@ func (m *Matrix) Transpose() *Matrix {
 		i++
 	}
 
-	var k int
-	for k < len(coords) {
-		v, _ := NewVector(cols, coords[k:k+cols]...)
+	var k uint
+	for k < uint(len(coords)) {
+		v := NewVector(cols, coords[k:k+cols]...)
 		vs = append(vs, v)
 		k += cols
 	}
