@@ -80,14 +80,13 @@ func (v Vector) Normalize() error {
 	return nil
 }
 
-// Add adds two vectors and returns the resulting vector.
-func (v Vector) Add(w Vector) Vector {
-	vec := NewZeroVector(v.Dimension())
-	for k, c := range v {
-		vec[k] = c + w[k]
+// Add adds vector w to vector v.
+func (v Vector) Add(w Vector) {
+	for k := range v {
+		if k < len(w) {
+			v[k] += w[k]
+		}
 	}
-
-	return vec
 }
 
 // Sub subtracts two vectors and returns the resulting vector.
