@@ -89,38 +89,34 @@ func (v Vector) Add(w Vector) {
 	}
 }
 
-// Sub subtracts two vectors and returns the resulting vector.
-func (v Vector) Sub(w Vector) Vector {
-	vec := NewZeroVector(v.Dimension())
-	for k, c := range v {
-		vec[k] = c - w[k]
-	}
-
-	return vec
-}
-
-// Mul multiplies two vectors and returns the resulting vector.
-func (v Vector) Mul(w Vector) Vector {
-	vec := NewZeroVector(v.Dimension())
-	for k, c := range v {
-		vec[k] = c * w[k]
-	}
-
-	return vec
-}
-
-// Dic divides two vectors and returns the resulting vector.
-func (v Vector) Div(w Vector) (Vector, error) {
-	vec := NewZeroVector(v.Dimension())
-	for k, c := range v {
-		if w[k] == 0 {
-			return nil, ErrIndivisbleByZero
+// Sub subtracts vector w from vector v.
+func (v Vector) Sub(w Vector) {
+	for k := range v {
+		if k < len(w) {
+			v[k] -= w[k]
 		}
-
-		vec[k] = c / w[k]
 	}
+}
 
-	return vec, nil
+// Mul multiplies vector w and vector v.
+func (v Vector) Mul(w Vector) {
+	for k := range v {
+		if k < len(w) {
+			v[k] *= w[k]
+		}
+	}
+}
+
+// Div divides vector w and vector v skipping in any occurances of division by
+// 0.
+func (v Vector) Div(w Vector) {
+	for k := range v {
+		if k < len(w) {
+			if w[k] != 0 {
+				v[k] /= w[k]
+			}
+		}
+	}
 }
 
 // Dot returns the dot product (scalar product) of two vectors.
