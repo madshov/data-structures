@@ -139,7 +139,9 @@ func (v Vector) Scale(scalar float64) Vector {
 	return vec
 }
 
-// GetCoord returns a given coordinate for the vector.
+// GetCoord returns a given coordinate for the vector. If the dimension of the
+// input to the function exceeds the vector dimension, an error is returned
+// instead.
 func (v Vector) GetCoord(coord uint) (float64, error) {
 	if v.Dimension() < coord+1 {
 		return 0, ErrInvalidDim
@@ -148,19 +150,22 @@ func (v Vector) GetCoord(coord uint) (float64, error) {
 	return v[coord], nil
 }
 
-// X returns the first coordinate of the vector. Shorthand for v.coords[0].
+// X returns the first coordinate of the vector. Shorthand for GetCoord(0), and
+// ignoring any errors returned from the call to GetCoord.
 func (v Vector) X() float64 {
 	c, _ := v.GetCoord(0)
 	return c
 }
 
-// Y returns the second coordinate of the vector. Shorthand for v.coords[1].
+// Y returns the second coordinate of the vector. Shorthand for GetCoord(1), and
+// ignoring any errors returned from the call to GetCoord.
 func (v Vector) Y() float64 {
 	c, _ := v.GetCoord(1)
 	return c
 }
 
-// Z returns the third coordinate of the vector. Shorthand for v.coords[2].
+// Z returns the third coordinate of the vector. Shorthand for GetCoord(2), and
+// ignoring any errors returned from the call to GetCoord.
 func (v Vector) Z() float64 {
 	c, _ := v.GetCoord(2)
 	return c
