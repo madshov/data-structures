@@ -189,7 +189,7 @@ func TestNormalize(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			err := test.v.Normalize()
 			if test.wantErr != nil {
-				assert.ErrorIs(err, algebraic.ErrMagZero)
+				assert.ErrorIs(err, test.wantErr)
 			} else {
 				assert.InDeltaSlice(test.want, test.v, 0.01)
 			}
@@ -365,6 +365,94 @@ func TestDiv(t *testing.T) {
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			test.v.Div(test.w)
+			assert.InDeltaSlice(test.want, test.v, 0.01)
+		})
+	}
+}
+
+func TestDot(t *testing.T) {
+	assert := assert.New(t)
+	tests := map[string]struct {
+		v       algebraic.Vector
+		w       algebraic.Vector
+		want    float64
+		wantErr error
+	}{
+		"should return the dot product of two 3-dimensional vectors v and w": {
+			v:       algebraic.NewVector(3, 1, 2, 3),
+			w:       algebraic.NewVector(3, 1, 2, 3),
+			want:    14,
+			wantErr: nil,
+		},
+		"should return the dot product of two 3-dimensional vector v and 3-dimensional zero vector w": {
+			v:       algebraic.NewVector(3, 1, 2, 3),
+			w:       algebraic.NewVector(3, 0, 0, 0),
+			want:    0,
+			wantErr: nil,
+		},
+		"should return an error with 3-dimensional vector v and 5-dimensional vector w": {
+			v:       algebraic.NewVector(3, 1, 2, 3),
+			w:       algebraic.NewVector(5, 1, 2, 3, 4, 5),
+			want:    0,
+			wantErr: algebraic.ErrInvalidDims,
+		},
+		"should return an error with 5-dimensional vector v and 3-dimensional vector w": {
+			v:       algebraic.NewVector(5, 1, 2, 3, 4, 5),
+			w:       algebraic.NewVector(3, 1, 2, 3),
+			want:    0,
+			wantErr: algebraic.ErrInvalidDims,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			got, err := test.v.Dot(test.w)
+			if test.wantErr != nil {
+				assert.ErrorIs(err, test.wantErr)
+			} else {
+				assert.InDelta(test.want, got, 0.01)
+			}
+		})
+	}
+}
+
+func TestScale(t *testing.T) {
+	assert := assert.New(t)
+	tests := map[string]struct {
+		v      algebraic.Vector
+		scalar float64
+		want   algebraic.Vector
+	}{
+		"should scale a 3-dimensional vector v with a positive scalar": {
+			v:      algebraic.NewVector(3, 1, 2, 3),
+			scalar: 2,
+			want:   algebraic.NewVector(3, 2, 4, 6),
+		},
+		"should scale a 3-dimensional vector v with a negative scalar": {
+			v:      algebraic.NewVector(3, 1, 2, 3),
+			scalar: -3,
+			want:   algebraic.NewVector(3, -3, -6, -9),
+		},
+		"should do nothing when scaling a zero vector v with a positive scalar": {
+			v:      algebraic.NewZeroVector(0),
+			scalar: 3,
+			want:   algebraic.NewZeroVector(0),
+		},
+		"should do nothing when scaling a 3-dimensional zero vector v with a positive scalar": {
+			v:      algebraic.NewZeroVector(3),
+			scalar: 3,
+			want:   algebraic.NewZeroVector(3),
+		},
+		"should scale a 3-dimensional vector v with a 0 scalar": {
+			v:      algebraic.NewVector(3, 1, 2, 3),
+			scalar: 0,
+			want:   algebraic.NewVector(3, 0, 0, 0),
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			test.v.Scale(test.scalar)
 			assert.InDeltaSlice(test.want, test.v, 0.01)
 		})
 	}

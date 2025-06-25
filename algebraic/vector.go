@@ -7,9 +7,10 @@ import (
 
 // Various errors a vector function can return.
 var (
-	ErrInvalidDim       = errors.New("vector dimension cannot be negative")
-	ErrMagZero          = errors.New("vector magnitude cannot be zero")
-	ErrIndivisbleByZero = errors.New("vector coordinate is not divisble by zero")
+	ErrNegativeDim = errors.New("vector dimension cannot be negative")
+	ErrInvalidDims = errors.New("vector dimensions are not equal")
+	ErrMagZero     = errors.New("vector magnitude cannot be zero")
+	// ErrIndivisbleByZero = errors.New("vector coordinate is not divisble by zero")
 )
 
 // Vector defines a vector structure with a slice of floating point coordinates.
@@ -120,23 +121,24 @@ func (v Vector) Div(w Vector) {
 }
 
 // Dot returns the dot product (scalar product) of two vectors.
-func (v Vector) Dot(w Vector) float64 {
+func (v Vector) Dot(w Vector) (float64, error) {
+	if v.Dimension() != w.Dimension() {
+		return 0, ErrInvalidDims
+	}
+
 	var dot float64
 	for k, c := range v {
 		dot += c * w[k]
 	}
 
-	return dot
+	return dot, nil
 }
 
 // Scale scales each coordinate in the vector with a given scalar value.
-func (v Vector) Scale(scalar float64) Vector {
-	vec := NewZeroVector(v.Dimension())
-	for k, c := range v {
-		vec[k] = c * scalar
+func (v Vector) Scale(scalar float64) {
+	for k := range v {
+		v[k] *= scalar
 	}
-
-	return vec
 }
 
 // GetCoord returns a given coordinate for the vector. If the dimension of the
@@ -144,7 +146,7 @@ func (v Vector) Scale(scalar float64) Vector {
 // instead.
 func (v Vector) GetCoord(coord uint) (float64, error) {
 	if v.Dimension() < coord+1 {
-		return 0, ErrInvalidDim
+		return 0, ErrNegativeDim
 	}
 
 	return v[coord], nil
