@@ -7,9 +7,9 @@ import (
 
 // Various errors a vector function can return.
 var (
-	ErrNegativeDim = errors.New("vector dimension cannot be negative")
-	ErrInvalidDims = errors.New("vector dimensions are not equal")
-	ErrMagZero     = errors.New("vector magnitude cannot be zero")
+	ErrInsufficientDim = errors.New("vector dimension is insufficient")
+	ErrInvalidDims     = errors.New("vector dimensions are not equal")
+	ErrMagZero         = errors.New("vector magnitude cannot be zero")
 	// ErrIndivisbleByZero = errors.New("vector coordinate is not divisble by zero")
 )
 
@@ -146,7 +146,7 @@ func (v Vector) Scale(scalar float64) {
 // instead.
 func (v Vector) GetCoord(coord uint) (float64, error) {
 	if v.Dimension() < coord+1 {
-		return 0, ErrNegativeDim
+		return 0, ErrInsufficientDim
 	}
 
 	return v[coord], nil

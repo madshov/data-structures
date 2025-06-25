@@ -457,3 +457,121 @@ func TestScale(t *testing.T) {
 		})
 	}
 }
+
+func TestGetCoord(t *testing.T) {
+	assert := assert.New(t)
+	tests := map[string]struct {
+		v       algebraic.Vector
+		coord   uint
+		want    float64
+		wantErr error
+	}{
+		"should return the first coordinate of a 3-dimensional vector v": {
+			v:       algebraic.NewVector(3, 1, 2, 3),
+			coord:   0,
+			want:    1,
+			wantErr: nil,
+		},
+		"should return the second coordinate of a 3-dimensional vector v": {
+			v:       algebraic.NewVector(3, 1, 2, 3),
+			coord:   1,
+			want:    2,
+			wantErr: nil,
+		},
+		"should return the third coordinate of a 3-dimensional vector v": {
+			v:       algebraic.NewVector(3, 1, 2, 3),
+			coord:   2,
+			want:    3,
+			wantErr: nil,
+		},
+		"should return an error when the coordinate is greater the size of vector v": {
+			v:       algebraic.NewVector(3, 1, 2, 3),
+			coord:   3,
+			want:    0,
+			wantErr: algebraic.ErrInsufficientDim,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			got, err := test.v.GetCoord(test.coord)
+			if test.wantErr != nil {
+				assert.ErrorIs(err, test.wantErr)
+			} else {
+				assert.InDelta(test.want, got, 0.01)
+			}
+		})
+	}
+}
+
+func TestX(t *testing.T) {
+	assert := assert.New(t)
+	tests := map[string]struct {
+		v    algebraic.Vector
+		want float64
+	}{
+		"should return the x coordinate of a 3-dimensional vector v": {
+			v:    algebraic.NewVector(3, 1, 2, 3),
+			want: 1,
+		},
+		"should return zero when the coordinate is greater the size of vector v": {
+			v:    algebraic.NewZeroVector(0),
+			want: 0,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := test.v.X()
+			assert.InDelta(test.want, got, 0.01)
+		})
+	}
+}
+
+func TestY(t *testing.T) {
+	assert := assert.New(t)
+	tests := map[string]struct {
+		v    algebraic.Vector
+		want float64
+	}{
+		"should return the x coordinate of a 3-dimensional vector v": {
+			v:    algebraic.NewVector(3, 1, 2, 3),
+			want: 2,
+		},
+		"should return zero when the coordinate is greater the size of vector v": {
+			v:    algebraic.NewVector(1, 1),
+			want: 0,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := test.v.Y()
+			assert.InDelta(test.want, got, 0.01)
+		})
+	}
+}
+
+func TestZ(t *testing.T) {
+	assert := assert.New(t)
+	tests := map[string]struct {
+		v    algebraic.Vector
+		want float64
+	}{
+		"should return the x coordinate of a 3-dimensional vector v": {
+			v:    algebraic.NewVector(3, 1, 2, 3),
+			want: 3,
+		},
+		"should return zero when the coordinate is greater the size of vector v": {
+			v:    algebraic.NewVector(2, 1, 2),
+			want: 0,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := test.v.Z()
+			assert.InDelta(test.want, got, 0.01)
+		})
+	}
+}
