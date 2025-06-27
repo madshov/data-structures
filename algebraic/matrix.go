@@ -12,73 +12,62 @@ var (
 	ErrNotSquare       = errors.New("matrix is not square")
 )
 
+// Maxtrix defines a maxtrix structure with a slice of Vectors.
+type Matrix []Vector
+
 // NewMatrix creates a new instance of a Matrix with a given number of columns
 // and a slice of coordinates, and returns a pointer to it. The function will
 // fill up each row of the matrix as long as there are more coordinates. If
 // there is not enough coordinates to fill the last row, the remaining will be
 // zero-filled.
-func NewMatrix(cols uint, coords ...float64) (*Matrix, error) {
-	var (
-		dim = uint(len(coords))
-	)
-
-	if cols > dim {
-		return nil, ErrColsOutOfBounds
-	}
-
+func NewMatrix(rows, cols uint, coords ...float64) Matrix {
 	var (
 		i, j uint
-		vs   []Vector
+		dim  = uint(len(coords))
+		m    Matrix
 	)
 
-	// loop through coords in chunks of cols
-	for i < dim {
-		j = i + cols
-		// cap upper bound if it becomes too big
-		if j > dim {
-			j = dim
+	for ; i < rows; i++ {
+		var cs = make([]float64, cols)
+		k := (i + 1) * cols
+
+		if j+k < dim {
+			cs = coords[j : j+k]
+		} else {
+			if j < dim {
+				cs = coords[j:]
+			}
 		}
 
-		v := NewVector(cols, coords[i:j]...)
-		vs = append(vs, v)
-		i += cols
+		v := NewVector(cols, cs...)
+		m = append(m, v)
+
+		j += cols
 	}
 
-	return &Matrix{
-		coords: vs,
-		rows:   uint(len(vs)),
-		cols:   cols,
-	}, nil
+	return m
 }
 
-func NewIdentityMatrix(rows, cols uint) (*Matrix, error) {
-	if rows != cols {
-		return nil, ErrNotSquare
+func NewIdentityMatrix(rows, cols uint) Matrix {
+	// Make sure it's a square matrix, i.e. set rows and cols to which ever is
+	// minimum.
+	if rows < cols {
+		cols = rows
+	} else {
+		rows = cols
 	}
 
 	var (
-		i  uint
-		vs []Vector
+		i uint
+		m Matrix
 	)
 
-	for i < rows {
+	for ; i < rows; i++ {
 		v := NewUnitVector(cols, i)
-		vs = append(vs, v)
-		i++
+		m = append(m, v)
 	}
 
-	return &Matrix{
-		coords: vs,
-		rows:   rows,
-		cols:   cols,
-	}, nil
-}
-
-// Matrix defines a matrix structure as a slice of vectors and a row and column
-// count.
-type Matrix struct {
-	coords     []Vector
-	rows, cols uint
+	return m
 }
 
 // Transpose creates and returns a new matrix with rows and columns transposed.
@@ -86,37 +75,37 @@ type Matrix struct {
 // |4.0  5.0  6.0|    =>    |2.0  5.0|
 //
 //	|3.0  6.0|
-func (m *Matrix) Transpose() *Matrix {
-	var (
-		coords []float64
-		vs     []Vector
-		rows   = m.cols
-		cols   = m.rows
-	)
+// func (m *Matrix) Transpose() *Matrix {
+// 	var (
+// 		coords []float64
+// 		vs     []Vector
+// 		rows   = m.cols
+// 		cols   = m.rows
+// 	)
 
-	var i uint
-	for i < rows {
-		var j uint
-		for j < cols {
-			coords = append(coords, m.coords[j][i])
-			j++
-		}
-		i++
-	}
+// 	var i uint
+// 	for i < rows {
+// 		var j uint
+// 		for j < cols {
+// 			coords = append(coords, m.coords[j][i])
+// 			j++
+// 		}
+// 		i++
+// 	}
 
-	var k uint
-	for k < uint(len(coords)) {
-		v := NewVector(cols, coords[k:k+cols]...)
-		vs = append(vs, v)
-		k += cols
-	}
+// 	var k uint
+// 	for k < uint(len(coords)) {
+// 		v := NewVector(cols, coords[k:k+cols]...)
+// 		vs = append(vs, v)
+// 		k += cols
+// 	}
 
-	return &Matrix{
-		coords: vs,
-		rows:   rows,
-		cols:   cols,
-	}
-}
+// 	return &Matrix{
+// 		coords: vs,
+// 		rows:   rows,
+// 		cols:   cols,
+// 	}
+// }
 
 // func (m *Matrix) Determinant																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																					() float64 {
 // }
@@ -127,8 +116,8 @@ func (m *Matrix) Transpose() *Matrix {
 // 	}
 // }
 
-func (m *Matrix) Print() {
-	for _, r := range m.coords {
+func (m Matrix) Print() {
+	for _, r := range m {
 		for _, c := range r {
 			fmt.Printf("%f ", c)
 		}
