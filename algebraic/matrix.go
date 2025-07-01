@@ -22,12 +22,12 @@ type Matrix []Vector
 // zero-filled.
 func NewMatrix(rows, cols uint, coords ...float64) Matrix {
 	var (
-		i, j uint
-		dim  = uint(len(coords))
-		m    Matrix
+		j   uint
+		m   Matrix
+		dim = uint(len(coords))
 	)
 
-	for ; i < rows; i++ {
+	for i := range rows {
 		var cs = make([]float64, cols)
 		k := (i + 1) * cols
 
@@ -57,12 +57,9 @@ func NewIdentityMatrix(rows, cols uint) Matrix {
 		rows = cols
 	}
 
-	var (
-		i uint
-		m Matrix
-	)
+	var m Matrix
 
-	for ; i < rows; i++ {
+	for i := range rows {
 		v := NewUnitVector(cols, i)
 		m = append(m, v)
 	}
@@ -73,9 +70,29 @@ func NewIdentityMatrix(rows, cols uint) Matrix {
 // Transpose creates and returns a new matrix with rows and columns transposed.
 // |1.0  2.0  3.0|          |1.0  4.0|
 // |4.0  5.0  6.0|    =>    |2.0  5.0|
-//
-//	|3.0  6.0|
-// func (m *Matrix) Transpose() *Matrix {
+// -                        |3.0  6.0|
+func (m Matrix) Transpose() Matrix {
+	rows := len(m)
+	if rows == 0 {
+		return m
+	}
+
+	cols := len(m[0])
+	var mt Matrix
+
+	for i := range cols {
+		var cs = make([]float64, cols)
+		for j := range rows {
+			cs[j] = m[j][i]
+		}
+
+		v := NewVector(uint(rows), cs...)
+		mt = append(mt, v)
+	}
+
+	return mt
+}
+
 // 	var (
 // 		coords []float64
 // 		vs     []Vector
