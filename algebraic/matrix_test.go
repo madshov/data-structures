@@ -67,13 +67,18 @@ func TestNewMatrix(t *testing.T) {
 				3, 4,
 			),
 		},
+		"should return a new zero matrix": {
+			rows: 0,
+			cols: 0,
+			want: algebraic.NewMatrix(0, 0),
+		},
 	}
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			got := algebraic.NewMatrix(test.rows, test.cols, test.coords...)
-			assert.Len(got, len(test.want))
-			assert.Len(got[0], len(test.want[0]))
+			// assert.Len(got, len(test.want))
+			// assert.Len(got[0], len(test.want[0]))
 			assert.EqualValues(test.want, got)
 		})
 	}
@@ -112,14 +117,63 @@ func TestNewIdentityMatrix(t *testing.T) {
 				0, 0, 1,
 			),
 		},
+		"should return a new zero matrix": {
+			rows: 0,
+			cols: 0,
+			want: algebraic.NewMatrix(0, 0),
+		},
 	}
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			got := algebraic.NewIdentityMatrix(test.rows, test.cols)
-			assert.Len(got, len(test.want))
-			assert.Len(got[0], len(test.want[0]))
+			// assert.Len(got, len(test.want))
+			// assert.Len(got[0], len(test.want[0]))
 			assert.EqualValues(test.want, got)
 		})
 	}
+}
+
+func TestTranspose(t *testing.T) {
+	assert := assert.New(t)
+	tests := map[string]struct {
+		m    algebraic.Matrix
+		want algebraic.Matrix
+	}{
+		"should return a transposed 3x2-matrix from a 2x3-matrix": {
+			m: algebraic.NewMatrix(2, 3,
+				1, 2, 3,
+				4, 5, 6,
+			),
+			want: algebraic.NewMatrix(3, 2,
+				1, 4,
+				2, 5,
+				3, 6,
+			),
+		},
+		"should return a transposed 3x3-matrix from a 3x3-matrix": {
+			m: algebraic.NewMatrix(3, 3,
+				1, 2, 3,
+				4, 5, 6,
+				7, 8, 9,
+			),
+			want: algebraic.NewMatrix(3, 3,
+				1, 4, 7,
+				2, 5, 8,
+				3, 6, 9,
+			),
+		},
+		"should return a new zero matrix": {
+			m:    algebraic.NewMatrix(0, 0),
+			want: algebraic.NewMatrix(0, 0),
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := test.m.Transpose()
+			assert.EqualValues(test.want, got)
+		})
+	}
+
 }
